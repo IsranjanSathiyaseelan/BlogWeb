@@ -5,7 +5,7 @@ import "./Navbar.css";
 const navItems = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "MyBlog", to: "/" },
+  { label: "MyBlog", to: "/myblog" },
 ];
 
 const Navbar = () => {
@@ -18,6 +18,7 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Disable body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
@@ -33,7 +34,8 @@ const Navbar = () => {
           BlogWeb
         </Link>
 
-        <ul className="navbar-links" role="list">
+        {/* Desktop Links */}
+        <ul className="navbar-links">
           {navItems.map((item) => (
             <li key={item.label}>
               <NavLink
@@ -57,6 +59,7 @@ const Navbar = () => {
           </Link>
         </div>
 
+        {/* Mobile Burger */}
         <button
           className={`navbar-burger ${menuOpen ? "navbar-burger--open" : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -69,11 +72,12 @@ const Navbar = () => {
         </button>
       </nav>
 
+      {/* Mobile Drawer */}
       <div
         className={`mobile-drawer ${menuOpen ? "mobile-drawer--open" : ""}`}
         aria-hidden={!menuOpen}
       >
-        <ul className="mobile-drawer__links" role="list">
+        <ul className="mobile-drawer__links">
           {navItems.map((item, i) => (
             <li key={item.label} style={{ "--i": i } as React.CSSProperties}>
               <NavLink
@@ -88,6 +92,7 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
+
         <div className="mobile-drawer__footer">
           <Link
             to="/signin"
@@ -106,6 +111,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Backdrop */}
       {menuOpen && (
         <div className="mobile-backdrop" onClick={() => setMenuOpen(false)} />
       )}
