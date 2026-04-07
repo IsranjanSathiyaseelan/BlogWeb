@@ -1,75 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
 .footer {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, #ffffff 100%);
-  color: #1a1a1a;
-  border-top: 1px solid #dce5f3;
-  padding: 2.1rem 1rem;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  backdrop-filter: blur(6px);
+  background: #f8fafc;
+  padding: 60px 20px 20px;
+  font-family: 'Poppins', sans-serif;
+  color: #334155;
 }
 
-.footer-content {
+.footer-container {
+  max-width: 1100px;
+  margin: auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  width: min(1120px, 92%);
-  margin: 0 auto 1.5rem;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 40px;
 }
 
-.footer-links {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.footer-links a {
-  color: #3b4a64;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.92rem;
-}
-
-.footer-links a:hover {
-  color: #0f56e9;
-}
-
-.footer-bottom {
-  width: min(1120px, 92%);
-  margin: 0 auto;
-  text-align: center;
-  font-size: 0.875rem;
-  color: #66758f;
-}
-
-@media (max-width: 640px) {
-  .footer-content {
-    justify-content: center;
-  }
-
-  .footer-links {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .footer-bottom {
-    font-size: 0.8rem;
-  }
+/* Brand */
+.footer-brand {
+  max-width: 300px;
 }
 
 .footer-logo {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f172a;
+  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1.16rem;
-  font-weight: 800;
-  color: #0f56e9;
-  text-decoration: none;
 }
 
 .footer-logo__dot {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
+  background: #6366f1;
   border-radius: 50%;
-  background: #0f56e9;
+}
+
+.footer-desc {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Links */
+.footer-links {
+  display: flex;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-column h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.footer-column a {
+  text-decoration: none;
+  color: #475569;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.footer-column a:hover {
+  color: #000;
+}
+
+/* Bottom */
+.footer-bottom {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .footer-links {
+    gap: 30px;
+  }
 }

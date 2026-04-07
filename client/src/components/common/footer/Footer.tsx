@@ -4,20 +4,42 @@ import "./Footer.css";
 const Footer = () => {
   return (
     <footer className="footer">
-      <div className="footer-content">
-        <Link to="/" className="footer-logo">
-          <span className="footer-logo__dot" />
-          BlogWeb
-        </Link>
-        <nav className="footer-links">
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/signin">Sign in</Link>
-          <Link to="/signup">Sign up</Link>
-        </nav>
+      <div className="footer-container">
+
+        {/* Logo + Description */}
+        <div className="footer-brand">
+          <Link to="/" className="footer-logo">
+            <span className="footer-logo__dot"></span>
+            BlogWeb
+          </Link>
+          <p className="footer-desc">
+            A modern blogging platform to share your ideas with the world.
+          </p>
+        </div>
+
+        {/* Links */}
+        <div className="footer-links">
+          <div className="footer-column">
+            <h4>Navigation</h4>
+            <Link to="/">Home</Link>
+            <Link to="/about">About</Link>
+            <Link to="/signin">Sign In</Link>
+            <Link to="/signup">Sign Up</Link>
+          </div>
+
+          <div className="footer-column">
+            <h4>Legal</h4>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Cookies</a>
+          </div>
+        </div>
+
       </div>
+
+      {/* Bottom */}
       <div className="footer-bottom">
-        <span>© {new Date().getFullYear()} BlogWeb. All rights reserved.</span>
+        <p>© {new Date().getFullYear()} BlogWeb. All rights reserved.</p>
       </div>
     </footer>
   );
