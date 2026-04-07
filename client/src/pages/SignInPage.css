@@ -1,0 +1,94 @@
+/* Container */
+.signin-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+  background: #f9fafb;
+}
+
+/* Form box */
+.signin-form {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Logo */
+.signin-logo {
+  margin-bottom: 24px;
+}
+
+/* Title */
+.signin-title {
+  font-size: 32px;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Subtitle */
+.signin-subtitle {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Fields */
+.signin-field {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+
+.signin-field label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.signin-field input {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  transition: 0.2s;
+}
+
+.signin-field input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* Button */
+.signin-button {
+  margin-top: 32px;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #4f46e5;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.signin-button:hover {
+  background: #4338ca;
+}
+
+/* Footer */
+.signin-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+}
+
+.signin-footer a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.signin-footer a:hover {
+  text-decoration: underline;
+}
