@@ -1,0 +1,115 @@
+/* Background wrapper */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef2ff, #f9fafb);
+  padding: 20px;
+}
+
+/* Card container */
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.4s ease;
+}
+
+/* Back button */
+.auth-back {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.auth-back:hover {
+  color: #111827;
+}
+
+/* Title */
+.auth-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+/* Subtitle */
+.auth-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+
+/* Field spacing */
+.auth-field {
+  margin-bottom: 18px;
+}
+
+/* Labels */
+.auth-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+/* Inputs */
+.auth-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+/* Input focus effect */
+.auth-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Error */
+.auth-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* Submit button */
+.auth-submit {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.auth-submit:hover {
+  transform: translateY(-1px);
+}
+
+/* Subtle animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
