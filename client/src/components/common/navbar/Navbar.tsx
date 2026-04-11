@@ -1,16 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import Button from "../button/Button";
+import Modal from "../modal/Modal";
+import SignIn from "../../../pages/auth/signin/SignIn";
+import SignUp from "../../../pages/auth/signup/SignUp";
+import useAuth from "../../../hooks/useAuth";
 import "./Navbar.css";
 
-const navItems = [
+const baseNavItems = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "MyBlog", to: "/myblog" },
 ];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const navItems = user
+    ? [...baseNavItems, { label: "MyBlog", to: "/myblog" }]
+    : baseNavItems;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -51,16 +62,44 @@ const Navbar = () => {
         </ul>
 
         <div className="navbar-actions">
-          <Link to="/signin" className="navbar-signin">
-            Sign in
-          </Link>
-          <Link to="/signup" className="navbar-signin">
-            Sign up
-          </Link>
+          {user ? (
+            <>
+              <span className="navbar-user">Hi, {user.name}</span>
+              <Button
+                type="button"
+                variant="secondary"
+                className="navbar-signin"
+                onClick={logout}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                type="button"
+                variant="ghost"
+                className="navbar-signin"
+                onClick={() => setIsSignInOpen(true)}
+              >
+                Sign in
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                className="navbar-signin"
+                onClick={() => setIsSignUpOpen(true)}
+              >
+                Sign up
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile Burger */}
-        <button
+        <Button
+          type="button"
+          variant="ghost"
           className={`navbar-burger ${menuOpen ? "navbar-burger--open" : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
@@ -69,7 +108,7 @@ const Navbar = () => {
           <span />
           <span />
           <span />
-        </button>
+        </Button>
       </nav>
 
       {/* Mobile Drawer */}
@@ -94,20 +133,44 @@ const Navbar = () => {
         </ul>
 
         <div className="mobile-drawer__footer">
-          <Link
-            to="/signin"
-            className="mobile-drawer__signin"
-            onClick={() => setMenuOpen(false)}
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/signup"
-            className="mobile-drawer__signin"
-            onClick={() => setMenuOpen(false)}
-          >
-            Sign up
-          </Link>
+          {user ? (
+            <Button
+              type="button"
+              variant="secondary"
+              className="mobile-drawer__signin"
+              onClick={() => {
+                logout();
+                setMenuOpen(false);
+              }}
+            >
+              Logout
+            </Button>
+          ) : (
+            <>
+              <Button
+                type="button"
+                variant="ghost"
+                className="mobile-drawer__signin"
+                onClick={() => {
+                  setIsSignInOpen(true);
+                  setMenuOpen(false);
+                }}
+              >
+                Sign in
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                className="mobile-drawer__signin"
+                onClick={() => {
+                  setIsSignUpOpen(true);
+                  setMenuOpen(false);
+                }}
+              >
+                Sign up
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -115,6 +178,14 @@ const Navbar = () => {
       {menuOpen && (
         <div className="mobile-backdrop" onClick={() => setMenuOpen(false)} />
       )}
+
+      <Modal isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)}>
+        <SignIn onClose={() => setIsSignInOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isSignUpOpen} onClose={() => setIsSignUpOpen(false)}>
+        <SignUp onClose={() => setIsSignUpOpen(false)} />
+      </Modal>
     </>
   );
 };
