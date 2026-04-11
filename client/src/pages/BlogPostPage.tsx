@@ -1,11 +1,22 @@
-import { Link, useParams } from "react-router-dom";
-import { useBlog } from "../context/blogStore";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useBlog } from "../context/blog/BlogContext";
+import Button from "../components/common/button/Button";
 import "./pages.css";
 
 const BlogPostPage = () => {
   const { slug } = useParams();
   const { getPostBySlug } = useBlog();
+  const navigate = useNavigate();
+
   const post = slug ? getPostBySlug(slug) : undefined;
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
 
   if (!post) {
     return (
@@ -23,17 +34,23 @@ const BlogPostPage = () => {
 
   return (
     <div className="page">
+      {/* Back Button */}
+      <Button onClick={handleBack} className="back-button">
+        ← Back
+      </Button>
       <article className="article">
+        {" "}
         <p className="article-meta">
-          {post.category} · {post.readMinutes} min read · {post.publishedAt}
-        </p>
-        <h1>{post.title}</h1>
-        <p className="article-author">By {post.author}</p>
-        <img src={post.imageUrl} alt={post.title} className="article-image" />
-        {post.content.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
-      </article>
+          {" "}
+          {post.category} · {post.readMinutes} min read ·{" "}
+          {post.publishedAt}{" "}
+        </p>{" "}
+        <h1>{post.title}</h1> <p className="article-author">By {post.author}</p>{" "}
+        <img src={post.imageUrl} alt={post.title} className="article-image" />{" "}
+        {post.content.map((paragraph, index) => (
+          <p key={index}>{paragraph}</p>
+        ))}{" "}
+      </article>{" "}
     </div>
   );
 };

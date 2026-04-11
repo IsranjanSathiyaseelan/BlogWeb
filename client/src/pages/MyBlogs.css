@@ -1,0 +1,140 @@
+/* =====================
+   MyBlogs Page Styles
+===================== */
+.myblogs {
+  display: grid;
+  gap: 1.8rem;
+  padding: 1rem;
+}
+
+/* Header */
+.myblogs__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+/* Blog Manager Form */
+.myblogs .blog-manager__form {
+  padding: 1.5rem;
+}
+
+/* Form Inputs */
+.myblogs input,
+.myblogs textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.myblogs input:focus,
+.myblogs textarea:focus {
+  outline: none;
+  border-color: #1163ff;
+  box-shadow: 0 0 0 3px rgba(17, 99, 255, 0.15);
+}
+
+/* Make the Create/Update Post button smaller */
+.myblogs .blog-manager__fields button {
+  margin-top: 0.5rem;
+  width: fit-content; /* keeps it tight to text */
+  padding: 1rem 1.5rem; /* smaller padding */
+  font-size: 1rem; /* slightly smaller text */
+}
+
+/* Blog List Grid */
+.myblogs .blog-manager__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+/* Blog Card */
+.myblogs .blog-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+  border-radius: 12px;
+  background: #fff;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.myblogs .blog-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(16, 36, 94, 0.15);
+  background: #f8faff;
+}
+
+/* Card Title & Text */
+.myblogs .blog-card h3 {
+  margin: 0.3rem 0;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+.myblogs .blog-card p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4rem;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+/* Card Meta */
+.myblogs .blog-card__meta {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.3rem;
+}
+
+/* Card Actions */
+.myblogs .blog-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Empty State */
+.myblogs__empty {
+  text-align: center;
+  padding: 3rem;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  background: #f1f5ff;
+  color: #64748b;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.myblogs__empty:hover {
+  background: #e0e7ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .myblogs .blog-manager__form {
+    padding: 1rem;
+  }
+
+  .myblogs .blog-manager__list {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .myblogs .blog-card {
+    padding: 0.8rem;
+  }
+}
