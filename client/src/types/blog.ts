@@ -1,4 +1,4 @@
-export type BlogCategory = "Engineering" | "Design" | "Product" | "Career";
+export type BlogCategory = string;
 
 export interface BlogPost {
   id: number;

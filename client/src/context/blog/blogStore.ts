@@ -1,11 +1,17 @@
 import { createContext, useContext } from "react";
-import type { BlogPost } from "../types/blog";
+import type { BlogPost } from "../../types/blog";
 
 export interface BlogContextValue {
   posts: BlogPost[];
   featuredPosts: BlogPost[];
   categories: string[];
   getPostBySlug: (slug: string) => BlogPost | undefined;
+  createPost: (post: Omit<BlogPost, "id" | "slug" | "publishedAt" | "featured">) => BlogPost;
+  updatePost: (
+    id: number,
+    updates: Partial<Omit<BlogPost, "id" | "slug" | "publishedAt">>,
+  ) => BlogPost | undefined;
+  deletePost: (id: number) => void;
 }
 
 export const BLOG_POSTS: BlogPost[] = [
