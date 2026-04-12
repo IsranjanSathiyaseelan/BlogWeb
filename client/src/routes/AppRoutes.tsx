@@ -1,23 +1,21 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AboutPage from "../pages/AboutPage";
 import BlogPostPage from "../pages/BlogPostPage";
 import HomePage from "../pages/HomePage";
 import NotFoundPage from "../pages/NotFoundPage";
-import SignInPage from "../components/signin/SignInPage";
-import SignUpPage from "../components/signup/SignUpPage";
 import MyBlogs from "../pages/MyBlogs";
+import MainLayout from "../components/layouts/MainLayout";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/myblog" element={<MyBlogs />} />
-      <Route path="/signin" element={<SignInPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/blog/:slug" element={<BlogPostPage />} />
-      <Route path="/myblog" element={<Navigate to="/" replace />} />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/myblog" element={<MyBlogs />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
     </Routes>
   );
 };
