@@ -23,6 +23,7 @@ const MyBlogs = () => {
   const { posts, createPost, updatePost, deletePost } = useBlog();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<BlogFormState>(initialForm);
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -91,8 +92,6 @@ const MyBlogs = () => {
       if (editingId === id) resetForm();
     }
   };
-
-  const navigate = useNavigate();
 
   const handleBack = () => {
     if (window.history.length > 1) {
