@@ -1,5 +1,5 @@
 ﻿import React, { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
 import Button from "../components/common/button/Button";
@@ -91,8 +91,21 @@ const MyBlogs = () => {
     }
   };
 
+  const navigate = useNavigate(); 
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/"); 
+    }
+  };
+
   return (
     <div className="page myblogs">
+      <Button onClick={handleBack} className="back-button">
+        ← Back
+      </Button>
       {/* Header */}
       <section className="content-panel myblogs__header">
         <div>

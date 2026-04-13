@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import BlogCard from "../components/blog/blogcard/BlogCart";
-import { useBlog } from "../context/blogStore";
+import BlogCard from "../components/blog/blogcard/BlogCard";
+import Button from "../components/common/button/Button";
+import { useBlog } from "../context/blog/BlogContext";
 import "./pages.css";
 
 const HomePage = () => {
@@ -49,16 +50,17 @@ const HomePage = () => {
           <h2>Latest posts</h2>
           <div className="chip-group" role="tablist" aria-label="Filter posts">
             {categories.map((category) => (
-              <button
+              <Button
                 key={category}
                 type="button"
+                variant="outline"
                 className={`chip ${
                   selectedCategory === category ? "chip-active" : ""
                 }`}
                 onClick={() => setSelectedCategory(category)}
               >
                 {category}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
