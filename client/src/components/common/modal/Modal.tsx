@@ -1,29 +1,48 @@
+import { useEffect } from "react";
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import Button from "../button/Button";
 import "./Modal.css";
 
 interface ModalProps {
-  title: string;
-  subtitle?: string;
+  isOpen: boolean;
+  onClose: () => void;
   children: ReactNode;
-  closeTo?: string;
 }
 
-const Modal = ({ title, subtitle, children, closeTo = "/" }: ModalProps) => {
+const Modal = ({ isOpen, onClose, children }: ModalProps) => {
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
   return (
-    <div className="modal-backdrop">
-      <section className="modal-panel" role="dialog" aria-modal="true">
-        <div className="modal-head">
-          <div>
-            <h1>{title}</h1>
-            {subtitle ? <p className="modal-subtitle">{subtitle}</p> : null}
-          </div>
-          <Link to={closeTo} className="modal-close" aria-label="Close modal">
-            Close
-          </Link>
-        </div>
-        <div className="modal-content">{children}</div>
-      </section>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <Button
+          variant="ghost"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Close modal"
+        >
+          ×
+        </Button>
+        {children}
+      </div>
     </div>
   );
 };
