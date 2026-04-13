@@ -44,7 +44,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const categories = useMemo(() => {
-    const all = posts.map((post) => post.category);
+    const all = posts.map((post: BlogPost) => post.category);
     return ["All", ...new Set(all)];
   }, [posts]);
 
@@ -55,7 +55,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
 
   const createPost = useCallback(
     (post: Omit<BlogPost, "id" | "slug" | "publishedAt" | "featured">) => {
-      const nextId = Math.max(0, ...posts.map((item) => item.id)) + 1;
+      const nextId = Math.max(0, ...posts.map((item: BlogPost) => item.id)) + 1;
       const nextPost: BlogPost = {
         ...post,
         id: nextId,
@@ -78,7 +78,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
       let updatedPost: BlogPost | undefined;
 
       setPosts((current) =>
-        current.map((post) => {
+        current.map((post: BlogPost) => {
           if (post.id !== id) {
             return post;
           }

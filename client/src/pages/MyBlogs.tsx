@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
 import Button from "../components/common/button/Button";
+import type { BlogPost } from "../types/blog";
 import "./pages.css";
 import "./MyBlogs.css";
 
@@ -91,13 +92,13 @@ const MyBlogs = () => {
     }
   };
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
     } else {
-      navigate("/"); 
+      navigate("/");
     }
   };
 
@@ -224,7 +225,7 @@ const MyBlogs = () => {
           </div>
         ) : (
           <div className="blog-manager__list">
-            {posts.map((post) => (
+            {posts.map((post: BlogPost) => (
               <article key={post.id} className="blog-card">
                 <div>
                   <p className="blog-card__meta">{post.category}</p>

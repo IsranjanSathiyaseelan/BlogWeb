@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import BlogCard from "../components/blog/blogcard/BlogCard";
 import Button from "../components/common/button/Button";
 import { useBlog } from "../context/blog/BlogContext";
+import type { BlogPost } from "../types/blog";
 import "./pages.css";
 
 const HomePage = () => {
@@ -32,7 +33,7 @@ const HomePage = () => {
           <h2>Featured</h2>
         </div>
         <div className="card-grid">
-          {featuredPosts.map((post) => (
+          {featuredPosts.map((post: BlogPost) => (
             <BlogCard
               key={post.id}
               title={post.title}
@@ -49,7 +50,7 @@ const HomePage = () => {
         <div className="section-head">
           <h2>Latest posts</h2>
           <div className="chip-group" role="tablist" aria-label="Filter posts">
-            {categories.map((category) => (
+            {categories.map((category: string) => (
               <Button
                 key={category}
                 type="button"
@@ -65,7 +66,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className="card-grid">
-          {visiblePosts.map((post) => (
+          {visiblePosts.map((post: BlogPost) => (
             <BlogCard
               key={post.id}
               title={post.title}
