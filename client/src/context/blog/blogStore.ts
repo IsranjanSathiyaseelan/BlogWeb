@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import type { BlogPost } from "../../types/blog";
+import { images } from "../../assets/asset";
 
 export interface BlogContextValue {
   posts: BlogPost[];
@@ -27,8 +28,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Before going live, verify analytics events, document support notes, and run a focused smoke test across the top three user paths.",
       "After launch, review your goal metric within 24 hours and summarize outcomes in a short retro. This closes the loop and compounds learning.",
     ],
-    imageUrl:
-      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: images.post,
     author: "Aisha Raman",
     publishedAt: "2026-03-18",
     readMinutes: 6,
@@ -47,8 +47,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Create folders around user journeys instead of technical layers when possible. This helps new engineers onboard faster.",
       "Set conventions for naming and import paths early. Consistency is a force multiplier at scale.",
     ],
-    imageUrl:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: images.post,
     author: "Daniel Choi",
     publishedAt: "2026-03-10",
     readMinutes: 8,
@@ -67,8 +66,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Whitespace is not empty. It is structure. Treat spacing as a design tool, not a leftover.",
       "When in doubt, simplify. Clarity converts better than novelty.",
     ],
-    imageUrl:
-      "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: images.post,
     author: "Leena Park",
     publishedAt: "2026-02-22",
     readMinutes: 5,
@@ -87,8 +85,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Ask for feedback tied to outcomes, not personality. For example: Was my API proposal clear and actionable?",
       "Consistency beats intensity. Small improvements compound quickly across a year.",
     ],
-    imageUrl:
-      "https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80",
+    imageUrl: images.post,
     author: "Rohan Patel",
     publishedAt: "2026-02-04",
     readMinutes: 7,
