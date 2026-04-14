@@ -7,7 +7,12 @@ import SignUp from "../../../pages/auth/signup/SignUp";
 import useAuth from "../../../hooks/useAuth";
 import "./Navbar.css";
 
-const baseNavItems = [
+type NavItem = {
+  label: string;
+  to: string;
+};
+
+const baseNavItems: NavItem[] = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
 ];
@@ -19,7 +24,7 @@ const Navbar = () => {
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const { user, logout } = useAuth();
 
-  const navItems = user
+  const navItems: NavItem[] = user
     ? [...baseNavItems, { label: "MyBlog", to: "/myblog" }]
     : baseNavItems;
 
@@ -47,7 +52,7 @@ const Navbar = () => {
 
         {/* Desktop Links */}
         <ul className="navbar-links">
-          {navItems.map((item) => (
+          {navItems.map((item: NavItem) => (
             <li key={item.label}>
               <NavLink
                 to={item.to}
@@ -117,7 +122,7 @@ const Navbar = () => {
         aria-hidden={!menuOpen}
       >
         <ul className="mobile-drawer__links">
-          {navItems.map((item, i) => (
+          {navItems.map((item: NavItem, i: number) => (
             <li key={item.label} style={{ "--i": i } as React.CSSProperties}>
               <NavLink
                 to={item.to}
