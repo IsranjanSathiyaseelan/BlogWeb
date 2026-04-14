@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { BLOG_POSTS, BlogContext, type BlogContextValue } from "./blogStore";
 import type { BlogPost } from "../../types/blog";
 
@@ -37,19 +31,14 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
   }, [posts]);
 
-  const featuredPosts = useMemo(
-    () => posts.filter((post) => post.featured),
-    [posts]
-  );
+  const featuredPosts = posts.filter((post) => post.featured);
 
-  const categories = useMemo(() => {
-    const all = posts.map((post) => post.category);
-    return ["All", ...Array.from(new Set(all))];
-  }, [posts]);
+  const all = posts.map((post) => post.category);
+  const categories = ["All", ...Array.from(new Set(all))];
 
   const getPostBySlug = useCallback(
     (slug: string) => posts.find((post) => post.slug === slug),
-    [posts]
+    [posts],
   );
 
   const createPost = useCallback(
@@ -68,13 +57,13 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
 
       return nextPost;
     },
-    [posts]
+    [posts],
   );
 
   const updatePost = useCallback(
     (
       id: number,
-      updates: Partial<Omit<BlogPost, "id" | "slug" | "publishedAt">>
+      updates: Partial<Omit<BlogPost, "id" | "slug" | "publishedAt">>,
     ) => {
       let updatedPost: BlogPost | undefined;
 
@@ -89,42 +78,27 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
           };
 
           return updatedPost;
-        })
+        }),
       );
 
       return updatedPost;
     },
-    []
+    [],
   );
 
   const deletePost = useCallback((id: number) => {
     setPosts((current) => current.filter((post) => post.id !== id));
   }, []);
 
-  const value = useMemo<BlogContextValue>(
-    () => ({
-      posts,
-      featuredPosts,
-      categories,
-      getPostBySlug,
-      createPost,
-      updatePost,
-      deletePost,
-    }),
-    [
-      posts,
-      featuredPosts,
-      categories,
-      getPostBySlug,
-      createPost,
-      updatePost,
-      deletePost,
-    ]
-  );
+  const value: BlogContextValue = {
+    posts,
+    featuredPosts,
+    categories,
+    getPostBySlug,
+    createPost,
+    updatePost,
+    deletePost,
+  };
 
-  return (
-    <BlogContext.Provider value={value}>
-      {children}
-    </BlogContext.Provider>
-  );
+  return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 };
