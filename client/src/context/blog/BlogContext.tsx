@@ -7,6 +7,7 @@ import {
 } from "react";
 import { BLOG_POSTS, BlogContext, type BlogContextValue } from "./blogStore";
 import type { BlogPost } from "../../types/blog";
+
 // eslint-disable-next-line react-refresh/only-export-components
 export { useBlog } from "./blogStore";
 
@@ -23,9 +24,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
   const [posts, setPosts] = useState<BlogPost[]>(() => {
     const stored = localStorage.getItem(POSTS_STORAGE_KEY);
 
-    if (!stored) {
-      return BLOG_POSTS;
-    }
+    if (!stored) return BLOG_POSTS;
 
     try {
       return JSON.parse(stored) as BlogPost[];
@@ -40,22 +39,23 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
 
   const featuredPosts = useMemo(
     () => posts.filter((post) => post.featured),
-    [posts],
+    [posts]
   );
 
   const categories = useMemo(() => {
-    const all = posts.map((post: BlogPost) => post.category);
-    return ["All", ...new Set(all)];
+    const all = posts.map((post) => post.category);
+    return ["All", ...Array.from(new Set(all))];
   }, [posts]);
 
   const getPostBySlug = useCallback(
     (slug: string) => posts.find((post) => post.slug === slug),
-    [posts],
+    [posts]
   );
 
   const createPost = useCallback(
     (post: Omit<BlogPost, "id" | "slug" | "publishedAt" | "featured">) => {
-      const nextId = Math.max(0, ...posts.map((item: BlogPost) => item.id)) + 1;
+      const nextId = Math.max(0, ...posts.map((item) => item.id)) + 1;
+
       const nextPost: BlogPost = {
         ...post,
         id: nextId,
@@ -65,23 +65,22 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
       };
 
       setPosts((current) => [nextPost, ...current]);
+
       return nextPost;
     },
-    [posts],
+    [posts]
   );
 
   const updatePost = useCallback(
     (
       id: number,
-      updates: Partial<Omit<BlogPost, "id" | "slug" | "publishedAt">>,
+      updates: Partial<Omit<BlogPost, "id" | "slug" | "publishedAt">>
     ) => {
       let updatedPost: BlogPost | undefined;
 
       setPosts((current) =>
-        current.map((post: BlogPost) => {
-          if (post.id !== id) {
-            return post;
-          }
+        current.map((post) => {
+          if (post.id !== id) return post;
 
           updatedPost = {
             ...post,
@@ -90,12 +89,12 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
           };
 
           return updatedPost;
-        }),
+        })
       );
 
       return updatedPost;
     },
-    [],
+    []
   );
 
   const deletePost = useCallback((id: number) => {
@@ -120,8 +119,12 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
       createPost,
       updatePost,
       deletePost,
-    ],
+    ]
   );
 
-  return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
+  return (
+    <BlogContext.Provider value={value}>
+      {children}
+    </BlogContext.Provider>
+  );
 };
