@@ -88,12 +88,31 @@
   box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
 }
 
+.navbar-burger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 44px;
+  height: 44px;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  gap: 5px;
+  flex-shrink: 0;
+}
+
 .navbar-burger span {
   width: 24px;
   height: 2px;
+
   background: #111827;
-  transition: all 0.3s ease;
-  border-radius: 2px;
+  border-radius: 999px;
+
+  display: block;
 }
 
 .navbar-burger--open span:nth-child(1) {
