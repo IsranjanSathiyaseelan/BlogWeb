@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./BlogCard.css";
 
@@ -21,10 +21,18 @@ const BlogCard = ({
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to top-left on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!cardRef.current) return;
     const bounds = cardRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - bounds.left, y: e.clientY - bounds.top });
+    setPosition({
+      x: e.clientX - bounds.left,
+      y: e.clientY - bounds.top,
+    });
   };
 
   return (
@@ -55,7 +63,9 @@ const BlogCard = ({
         <Link to={link}>
           <h5 className="blogcard-title">{title}</h5>
         </Link>
+
         <p className="blogcard-description">{description}</p>
+
         <Link to={link} className="blogcard-readmore">
           Read more
           <svg
