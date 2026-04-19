@@ -5,7 +5,6 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-container">
-
         {/* Logo + Description */}
         <div className="footer-brand">
           <Link to="/" className="footer-logo">
@@ -29,12 +28,11 @@ const Footer = () => {
 
           <div className="footer-column">
             <h4>Legal</h4>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Cookies</a>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Service</Link>
+            <Link to="/cookies">Cookies</Link>
           </div>
         </div>
-
       </div>
 
       {/* Bottom */}
