@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
@@ -24,6 +24,7 @@ const MyBlogs = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<BlogFormState>(initialForm);
   const navigate = useNavigate();
+  const formRef = useRef<HTMLDivElement>(null);
 
   if (loading) {
     return (
@@ -76,6 +77,7 @@ const MyBlogs = () => {
     if (!post) return;
 
     setEditingId(post.id);
+
     setForm({
       title: post.title,
       excerpt: post.excerpt,
@@ -106,6 +108,7 @@ const MyBlogs = () => {
       <Button onClick={handleBack} className="back-button">
         ← Back
       </Button>
+
       {/* Header */}
       <section className="content-panel myblogs__header">
         <div>
@@ -117,7 +120,7 @@ const MyBlogs = () => {
       </section>
 
       {/* Form */}
-      <section className="content-panel blog-manager">
+      <section ref={formRef} className="content-panel blog-manager">
         <div className="blog-manager__form">
           <div className="blog-manager__header">
             <h2>{editingId ? "Edit blog post" : "Create a new blog"}</h2>
@@ -153,44 +156,42 @@ const MyBlogs = () => {
               />
             </label>
 
-            <div className="blog-manager__grid">
-              <label className="blog-manager__field">
-                Image URL
-                <input
-                  value={form.imageUrl}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, imageUrl: e.target.value }))
-                  }
-                  required
-                />
-              </label>
+            <label className="blog-manager__field">
+              Image URL
+              <input
+                value={form.imageUrl}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, imageUrl: e.target.value }))
+                }
+                required
+              />
+            </label>
 
-              <label className="blog-manager__field">
-                Category
-                <input
-                  value={form.category}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, category: e.target.value }))
-                  }
-                />
-              </label>
+            <label className="blog-manager__field">
+              Category
+              <input
+                value={form.category}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, category: e.target.value }))
+                }
+              />
+            </label>
 
-              <label className="blog-manager__field">
-                Reading minutes
-                <input
-                  type="number"
-                  min={1}
-                  value={form.readMinutes}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      readMinutes: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </label>
-            </div>
+            <label className="blog-manager__field">
+              Reading minutes
+              <input
+                type="number"
+                min={1}
+                value={form.readMinutes}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    readMinutes: e.target.value,
+                  }))
+                }
+                required
+              />
+            </label>
 
             <label className="blog-manager__field">
               Content
@@ -200,7 +201,6 @@ const MyBlogs = () => {
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, content: e.target.value }))
                 }
-                placeholder="Write each paragraph on a new line"
                 required
               />
             </label>
