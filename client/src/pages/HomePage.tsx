@@ -6,7 +6,7 @@ import type { BlogPost } from "../types/blog";
 import "./pages.css";
 
 const HomePage = () => {
-  const { posts, featuredPosts, categories } = useBlog();
+  const { posts, categories } = useBlog();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const visiblePosts = useMemo(() => {
@@ -26,24 +26,6 @@ const HomePage = () => {
           BlogWeb curates practical writing from modern builders. Read what
           matters, skip what does not.
         </p>
-      </section>
-
-      <section className="content-section">
-        <div className="section-head">
-          <h2>Featured</h2>
-        </div>
-        <div className="card-grid">
-          {featuredPosts.map((post: BlogPost) => (
-            <BlogCard
-              key={post.id}
-              title={post.title}
-              description={post.excerpt}
-              imageUrl={post.imageUrl}
-              author={post.author}
-              link={`/blog/${post.slug}`}
-            />
-          ))}
-        </div>
       </section>
 
       <section className="content-section">

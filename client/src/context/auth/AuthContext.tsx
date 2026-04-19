@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -88,10 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     saveUser(null);
   }, []);
 
-  const value = useMemo(
-    () => ({ user, loading, login, signup, logout }),
-    [user, loading, login, signup, logout],
-  );
+  const value = { user, loading, login, signup, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

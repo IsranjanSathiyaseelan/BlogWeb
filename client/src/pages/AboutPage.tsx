@@ -1,9 +1,14 @@
 import Button from "../components/common/button/Button";
 import { useNavigate } from "react-router-dom";
 import "./pages.css";
+import { useEffect } from "react";
 
 const AboutPage = () => {
   const navigate = useNavigate(); 
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
   const handleBack = () => {
     if (window.history.length > 1) {
