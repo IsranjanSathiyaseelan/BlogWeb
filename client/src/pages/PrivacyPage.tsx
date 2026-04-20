@@ -46,13 +46,6 @@ const PrivacyPage = () => {
           secure.
         </p>
 
-        <h2>Data Sharing</h2>
-        <p>
-          We do not sell your personal information. We may share data with trusted
-          service providers who help us operate the platform, provided they agree
-          to keep your information confidential.
-        </p>
-
         <h2>Your Rights</h2>
         <p>
           You may have the right to access, update, or delete your personal
