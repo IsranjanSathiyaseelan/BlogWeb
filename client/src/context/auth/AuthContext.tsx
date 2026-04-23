@@ -1,30 +1,10 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-  type ReactNode,
-} from "react";
-
-type AuthUser = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-type AuthCredentials = {
-  email: string;
-  password: string;
-  name?: string;
-};
-
-export interface AuthContextValue {
-  user: AuthUser | null;
-  loading: boolean;
-  login: (credentials: AuthCredentials) => Promise<void>;
-  signup: (credentials: AuthCredentials) => Promise<void>;
-  logout: () => void;
-}
+import { createContext, useCallback, useContext, useState } from "react";
+import type {
+  AuthContextValue,
+  AuthCredentials,
+  AuthProviderProps,
+  AuthUser,
+} from "../../types/auth";
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -41,7 +21,7 @@ const delay = (ms: number) =>
     window.setTimeout(resolve, ms);
   });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthUser | null>(() => {
     const stored = localStorage.getItem(USER_STORAGE_KEY);
     if (stored) {

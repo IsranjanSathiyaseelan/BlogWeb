@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
 import Button from "../components/common/button/Button";
-import type { BlogPost } from "../types/blog";
+import type { BlogFormState, BlogPost } from "../types/blog";
 import "./pages.css";
 import "./MyBlogs.css";
 
@@ -15,8 +15,6 @@ const initialForm = {
   readMinutes: "5",
   content: "",
 };
-
-type BlogFormState = typeof initialForm;
 
 const MyBlogs = () => {
   const { user, loading } = useAuth();

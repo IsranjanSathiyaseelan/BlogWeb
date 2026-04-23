@@ -1,12 +1,5 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonProps } from "../../../types/ui";
 import "./Button.css";
-
-export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
-  variant?: ButtonVariant;
-}
 
 const Button = ({
   children,

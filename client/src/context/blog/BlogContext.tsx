@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { BLOG_POSTS, BlogContext, type BlogContextValue } from "./blogStore";
-import type { BlogPost } from "../../types/blog";
+import { BLOG_POSTS, BlogContext } from "./blogStore";
+import type {
+  BlogContextValue,
+  BlogPost,
+  CreateBlogPostInput,
+  UpdateBlogPostInput,
+} from "../../types/blog";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { useBlog } from "./blogStore";
@@ -42,7 +47,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const createPost = useCallback(
-    (post: Omit<BlogPost, "id" | "slug" | "publishedAt" | "featured">) => {
+    (post: CreateBlogPostInput) => {
       const nextId = Math.max(0, ...posts.map((item) => item.id)) + 1;
 
       const nextPost: BlogPost = {
@@ -60,31 +65,25 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
     [posts],
   );
 
-  const updatePost = useCallback(
-    (
-      id: number,
-      updates: Partial<Omit<BlogPost, "id" | "slug" | "publishedAt">>,
-    ) => {
-      let updatedPost: BlogPost | undefined;
+  const updatePost = useCallback((id: number, updates: UpdateBlogPostInput) => {
+    let updatedPost: BlogPost | undefined;
 
-      setPosts((current) =>
-        current.map((post) => {
-          if (post.id !== id) return post;
+    setPosts((current) =>
+      current.map((post) => {
+        if (post.id !== id) return post;
 
-          updatedPost = {
-            ...post,
-            ...updates,
-            slug: updates.title ? createSlug(updates.title) : post.slug,
-          };
+        updatedPost = {
+          ...post,
+          ...updates,
+          slug: updates.title ? createSlug(updates.title) : post.slug,
+        };
 
-          return updatedPost;
-        }),
-      );
+        return updatedPost;
+      }),
+    );
 
-      return updatedPost;
-    },
-    [],
-  );
+    return updatedPost;
+  }, []);
 
   const deletePost = useCallback((id: number) => {
     setPosts((current) => current.filter((post) => post.id !== id));
