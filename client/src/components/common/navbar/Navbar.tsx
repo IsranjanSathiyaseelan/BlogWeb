@@ -5,12 +5,8 @@ import Modal from "../modal/Modal";
 import SignIn from "../../../pages/auth/signin/SignIn";
 import SignUp from "../../../pages/auth/signup/SignUp";
 import useAuth from "../../../hooks/useAuth";
+import type { DrawerAnimationStyle, NavItem } from "../../../types/ui";
 import "./Navbar.css";
-
-type NavItem = {
-  label: string;
-  to: string;
-};
 
 const baseNavItems: NavItem[] = [
   { label: "Home", to: "/" },
@@ -123,7 +119,7 @@ const Navbar = () => {
       >
         <ul className="mobile-drawer__links">
           {navItems.map((item: NavItem, i: number) => (
-            <li key={item.label} style={{ "--i": i } as React.CSSProperties}>
+            <li key={item.label} style={{ "--i": i } as DrawerAnimationStyle}>
               <NavLink
                 to={item.to}
                 className={({ isActive }) =>

@@ -1,13 +1,7 @@
 import { useEffect } from "react";
-import type { ReactNode } from "react";
+import type { ModalProps } from "../../../types/ui";
 import Button from "../button/Button";
 import "./Modal.css";
-
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
-}
 
 const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   useEffect(() => {

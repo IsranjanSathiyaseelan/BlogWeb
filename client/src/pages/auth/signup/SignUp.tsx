@@ -1,11 +1,8 @@
 ﻿import { useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import Button from "../../../components/common/button/Button";
+import type { SignFormEvent, SignUpProps } from "../../../types/ui";
 import "./SignUp.css";
-
-interface SignUpProps {
-  onClose: () => void;
-}
 
 const SignUp = ({ onClose }: SignUpProps) => {
   const [name, setName] = useState("");
@@ -14,7 +11,7 @@ const SignUp = ({ onClose }: SignUpProps) => {
   const [error, setError] = useState("");
   const { signup, loading } = useAuth();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SignFormEvent) => {
     event.preventDefault();
     setError("");
 

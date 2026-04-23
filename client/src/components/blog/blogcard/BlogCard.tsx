@@ -1,14 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import type { BlogCardMouseEvent, BlogCardProps } from "../../../types/ui";
 import "./BlogCard.css";
-
-interface BlogCardProps {
-  title: string;
-  description: string;
-  imageUrl: string;
-  author: string;
-  link: string;
-}
 
 const BlogCard = ({
   title,
@@ -26,7 +19,7 @@ const BlogCard = ({
     window.scrollTo(0, 0);
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseMove = (e: BlogCardMouseEvent) => {
     if (!cardRef.current) return;
     const bounds = cardRef.current.getBoundingClientRect();
     setPosition({
