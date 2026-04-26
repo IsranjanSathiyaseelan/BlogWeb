@@ -1,14 +1,27 @@
-import express from "express";
+import "dotenv/config";
+import { app } from "./app";
+import { checkDbConnection, pool } from "./config/db";
 
-const app = express();
-const PORT = 3000;
+const port = Number(process.env.PORT) || 3000;
 
-app.use(express.json());
+const startServer = async () => {
+  const connected = await checkDbConnection();
 
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
+  if (!connected) {
+    console.error("Database not connected. Check your .env or PostgreSQL.");
+    process.exit(1);
+  }
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+
+  // graceful shutdown
+  process.on("SIGINT", async () => {
+    console.log("\nShutting down...");
+    await pool.end();
+    process.exit(0);
+  });
+};
+
+startServer();
