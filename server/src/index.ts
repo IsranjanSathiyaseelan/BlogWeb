@@ -1,6 +1,27 @@
+import "dotenv/config";
 import { app } from "./app";
-import { env } from "./config/env";
+import { checkDbConnection, pool } from "./config/db";
 
-app.listen(env.PORT, () => {
-  console.log(`Server running on http://localhost:${env.PORT}`);
-});
+const port = Number(process.env.PORT) || 3000;
+
+const startServer = async () => {
+  const connected = await checkDbConnection();
+
+  if (!connected) {
+    console.error("Database not connected. Check your .env or PostgreSQL.");
+    process.exit(1);
+  }
+
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+
+  // graceful shutdown
+  process.on("SIGINT", async () => {
+    console.log("\nShutting down...");
+    await pool.end();
+    process.exit(0);
+  });
+};
+
+startServer();

@@ -1,14 +1,19 @@
 import express from "express";
-import { router } from "./routes";
-import { notFound } from "./middlewares/notFound";
-import { errorHandler } from "./middlewares/errorHandler";
+import { checkDbConnection } from "./config/db";
 
 const app = express();
 
 app.use(express.json());
-app.use("/api", router);
 
-app.use(notFound);
-app.use(errorHandler);
+app.get("/api", async (_req, res) => {
+  const dbConnected = await checkDbConnection();
+
+  res.status(dbConnected ? 200 : 503).json({
+    status: dbConnected ? "ok" : "degraded",
+    message: "API is running",
+    database: dbConnected ? "connected" : "disconnected",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 export { app };
