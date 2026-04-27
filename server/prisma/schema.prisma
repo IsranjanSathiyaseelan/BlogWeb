@@ -2,7 +2,6 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +9,54 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+
+  role         Role       @default(READER)
+
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  posts        BlogPost[]
+
+  @@map("users")
+}
+
+model BlogPost {
+  id           Int      @id @default(autoincrement())
+  slug         String   @unique
+
+  title        String
+  excerpt      String
+  content      String   // store as markdown or plain text
+
+  imageUrl     String   @map("image_url")
+
+  authorId     Int      @map("author_id")
+  author       User     @relation(fields: [authorId], references: [id])
+
+  publishedAt  DateTime @default(now()) @map("published_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  readMinutes  Int      @map("read_minutes")
+  category     String
+  featured     Boolean  @default(false)
+
+  @@index([authorId])
+  @@index([category])
+  @@index([publishedAt])
+
+  @@map("blog_posts")
+}
+
+enum Role {
+  READER
+  WRITER
+  ADMIN
 }
