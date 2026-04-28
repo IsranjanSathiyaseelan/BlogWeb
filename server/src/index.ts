@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { app } from "./app";
-import { checkDbConnection, pool } from "./config/db";
+import { checkDbConnection, initializeDb, pool } from "./config/db";
 
 const port = Number(process.env.PORT) || 3000;
 
@@ -11,6 +11,8 @@ const startServer = async () => {
     console.error("Database not connected. Check your .env or PostgreSQL.");
     process.exit(1);
   }
+
+  await initializeDb();
 
   app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
