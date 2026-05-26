@@ -16,11 +16,11 @@ export interface BlogPost {
 
 export type CreateBlogPostInput = Omit<
   BlogPost,
-  "id" | "slug" | "publishedAt" | "featured"
+  "id" | "slug" | "publishedAt" | "featured" | "author"
 >;
 
 export type UpdateBlogPostInput = Partial<
-  Omit<BlogPost, "id" | "slug" | "publishedAt">
+  Omit<BlogPost, "id" | "slug" | "publishedAt" | "author">
 >;
 
 export interface BlogContextValue {
@@ -28,9 +28,9 @@ export interface BlogContextValue {
   featuredPosts: BlogPost[];
   categories: string[];
   getPostBySlug: (slug: string) => BlogPost | undefined;
-  createPost: (post: CreateBlogPostInput) => BlogPost;
-  updatePost: (id: number, updates: UpdateBlogPostInput) => BlogPost | undefined;
-  deletePost: (id: number) => void;
+  createPost: (post: CreateBlogPostInput) => Promise<BlogPost>;
+  updatePost: (id: number, updates: UpdateBlogPostInput) => Promise<BlogPost>;
+  deletePost: (id: number) => Promise<void>;
 }
 
 export interface BlogFormState {

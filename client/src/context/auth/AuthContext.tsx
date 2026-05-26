@@ -1,25 +1,36 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import type {
   AuthContextValue,
   AuthCredentials,
   AuthProviderProps,
   AuthUser,
 } from "../../types/auth";
+import * as authApi from "../../api/auth";
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const USER_STORAGE_KEY = "blogweb_user";
+const TOKEN_STORAGE_KEY = "blogweb_token";
 
-const createDemoUser = (email: string, name?: string): AuthUser => ({
-  id: crypto.randomUUID?.() ?? `${Date.now()}`,
-  name: name?.trim() || "Demo User",
-  email: email.trim().toLowerCase(),
-});
+const saveAuth = (user: AuthUser | null, token?: string | null) => {
+  if (user) {
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+  } else {
+    localStorage.removeItem(USER_STORAGE_KEY);
+  }
 
-const delay = (ms: number) =>
-  new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
+  if (token) {
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  }
+};
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthUser | null>(() => {
@@ -35,39 +46,61 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   });
   const [loading, setLoading] = useState(false);
 
-  const saveUser = (nextUser: AuthUser | null) => {
-    setUser(nextUser);
-
-    if (nextUser) {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
-    } else {
-      localStorage.removeItem(USER_STORAGE_KEY);
-    }
-  };
-
-  const login = useCallback(async ({ email }: AuthCredentials) => {
+  const login = useCallback(async (credentials: AuthCredentials) => {
     setLoading(true);
-    await delay(600);
 
-    const nextUser = createDemoUser(email);
-    saveUser(nextUser);
-    setLoading(false);
+    try {
+      const { token, user: loggedInUser } = await authApi.login(credentials);
+      saveAuth(loggedInUser, token);
+      setUser(loggedInUser);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const signup = useCallback(async ({ email, name }: AuthCredentials) => {
+  const signup = useCallback(async (credentials: AuthCredentials) => {
     setLoading(true);
-    await delay(700);
 
-    const nextUser = createDemoUser(email, name);
-    saveUser(nextUser);
-    setLoading(false);
+    try {
+      const { token, user: nextUser } = await authApi.signup(credentials);
+      saveAuth(nextUser, token);
+      setUser(nextUser);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const logout = useCallback(() => {
-    saveUser(null);
+    saveAuth(null, null);
+    setUser(null);
   }, []);
 
-  const value = { user, loading, login, signup, logout };
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (!user && token) {
+      setLoading(true);
+      authApi
+        .getCurrentUser()
+        .then(({ user: currentUser }) => {
+          setUser(currentUser);
+          saveAuth(currentUser, token);
+        })
+        .catch(() => {
+          logout();
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [logout, user]);
+
+  const value: AuthContextValue = {
+    user,
+    loading,
+    login,
+    signup,
+    logout,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

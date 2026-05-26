@@ -1,0 +1,73 @@
+import type { BlogPost } from "../types/blog";
+import api from "./axios";
+
+export type CreateBlogPostPayload = Omit<
+  BlogPost,
+  "id" | "slug" | "publishedAt" | "featured" | "author"
+> & {
+  content: string[];
+};
+
+export type UpdateBlogPostPayload = Partial<CreateBlogPostPayload>;
+
+const serializeContent = (content: string[] | string): string =>
+  typeof content === "string" ? content : content.join("\n");
+
+const normalizePost = (post: any): BlogPost => ({
+  id: post.id,
+  slug: post.slug,
+  title: post.title,
+  excerpt: post.excerpt,
+  content:
+    typeof post.content === "string"
+      ? post.content
+          .split(/\r?\n/)
+          .map((line: string) => line.trim())
+          .filter(Boolean)
+      : post.content,
+  imageUrl: post.imageUrl ?? post.image_url,
+  author: post.author ?? post.author_name ?? `Author ${post.author_id}`,
+  publishedAt: post.publishedAt ?? post.published_at,
+  readMinutes: post.readMinutes ?? post.read_minutes,
+  category: post.category,
+  featured: post.featured,
+});
+
+export const getPosts = async (): Promise<BlogPost[]> => {
+  const response = await api.get("/posts");
+  return (response.data as any[]).map(normalizePost);
+};
+
+export const getPostBySlug = async (slug: string): Promise<BlogPost> => {
+  const response = await api.get(`/posts/${slug}`);
+  return normalizePost(response.data);
+};
+
+export const createPost = async (
+  payload: CreateBlogPostPayload,
+): Promise<BlogPost> => {
+  const response = await api.post("/posts", {
+    ...payload,
+    content: serializeContent(payload.content),
+  });
+  return normalizePost(response.data);
+};
+
+export const updatePost = async (
+  id: number,
+  payload: UpdateBlogPostPayload,
+): Promise<BlogPost> => {
+  const body = {
+    ...payload,
+    ...(payload.content
+      ? { content: serializeContent(payload.content) }
+      : {}),
+  };
+
+  const response = await api.put(`/posts/${id}`, body);
+  return normalizePost(response.data);
+};
+
+export const deletePost = async (id: number): Promise<void> => {
+  await api.delete(`/posts/${id}`);
+};
