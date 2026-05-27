@@ -1,20 +1,21 @@
 import Button from "../components/common/button/Button";
 import { useNavigate } from "react-router-dom";
 import "./pages.css";
+import "./AboutPage.css";
 import { useEffect } from "react";
 
 const AboutPage = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
     } else {
-      navigate("/"); 
+      navigate("/");
     }
   };
 
@@ -24,14 +25,14 @@ const AboutPage = () => {
         ← Back
       </Button>
 
-      <section className="content-panel">
+      <section className="content-panel about-panel">
         <h1>About BlogWeb</h1>
 
         <p>
           BlogWeb is a clean, focused platform built for sharing practical ideas
           about product development, software engineering, and modern digital
-          experiences. Our goal is to provide content that is not only insightful
-          but immediately useful for real-world projects.
+          experiences. Our goal is to provide content that is not only
+          insightful but immediately useful for real-world projects.
         </p>
 
         <p>
@@ -49,7 +50,7 @@ const AboutPage = () => {
 
         <p>Key features of BlogWeb include:</p>
 
-        <ul>
+        <ul className="about-list">
           <li>Well-organized blog posts with clean UI</li>
           <li>Built using modern React patterns and best practices</li>
           <li>Reusable components for scalability</li>
@@ -58,9 +59,9 @@ const AboutPage = () => {
         </ul>
 
         <p>
-          BlogWeb is more than just a blog - it’s a learning project, a knowledge
-          hub, and a foundation you can build upon to create your own full-stack
-          applications.
+          BlogWeb is more than just a blog - it’s a learning project, a
+          knowledge hub, and a foundation you can build upon to create your own
+          full-stack applications.
         </p>
 
         <p>

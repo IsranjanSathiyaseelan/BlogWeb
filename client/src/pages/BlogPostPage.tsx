@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useBlog } from "../context/blog/BlogContext";
 import Button from "../components/common/button/Button";
 import "./pages.css";
+import "./BlogPostPage.css";
 
 const BlogPostPage = () => {
   const { slug } = useParams();
@@ -45,15 +46,15 @@ const BlogPostPage = () => {
         ← Back
       </Button>
 
-      <article className="article">
-        <p className="article-meta">
+      <article className="blog-post-article">
+        <p className="blog-post-meta">
           {post.category} · {post.readMinutes} min read · {post.publishedAt}
         </p>
 
         <h1>{post.title}</h1>
-        <p className="article-author">By {post.author}</p>
+        <p className="blog-post-author">By {post.author}</p>
 
-        <img src={post.imageUrl} alt={post.title} className="article-image" />
+        <img src={post.imageUrl} alt={post.title} className="blog-post-image" />
 
         {post.content.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>

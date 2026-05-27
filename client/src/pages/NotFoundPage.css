@@ -1,0 +1,20 @@
+.not-found-panel {
+  text-align: center;
+  width: min(620px, 100%);
+  border-style: dashed;
+  border-width: 2px;
+  border-color: #cfe0f7;
+  background:
+    radial-gradient(circle at top right, rgba(17, 99, 255, 0.12), transparent 52%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.not-found-panel h1 {
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.4rem;
+}
+
+.not-found-panel p {
+  margin-bottom: 0.9rem;
+}
