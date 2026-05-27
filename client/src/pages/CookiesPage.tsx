@@ -1,30 +1,31 @@
 import { useEffect } from "react";
 import "./pages.css";
+import "./CookiesPage.css";
 
 const CookiesPage = () => {
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="page">
-      <section className="content-panel article">
+      <section className="content-panel cookies-article">
         <h1>Cookie Policy</h1>
-        <p className="article-meta">Last updated: April 2026</p>
+        <p className="cookies-meta">Last updated: April 2026</p>
 
         <p>
           This Cookie Policy explains how BlogWeb uses cookies and similar
-          technologies to recognize you when you visit our platform. It describes
-          what these technologies are, why we use them, and your choices regarding
-          their use.
+          technologies to recognize you when you visit our platform. It
+          describes what these technologies are, why we use them, and your
+          choices regarding their use.
         </p>
 
         <h2>What Are Cookies?</h2>
         <p>
           Cookies are small text files stored on your device when you visit a
-          website. They help websites function efficiently and provide information
-          to improve user experience, such as remembering your preferences and
-          settings.
+          website. They help websites function efficiently and provide
+          information to improve user experience, such as remembering your
+          preferences and settings.
         </p>
 
         <h2>How We Use Cookies</h2>
@@ -46,8 +47,8 @@ const CookiesPage = () => {
 
         <h3>Performance Cookies</h3>
         <p>
-          These cookies help us understand how visitors interact with the site by
-          collecting anonymous information such as page visits and traffic
+          These cookies help us understand how visitors interact with the site
+          by collecting anonymous information such as page visits and traffic
           sources.
         </p>
 
@@ -73,8 +74,8 @@ const CookiesPage = () => {
 
         <h2>Changes to This Policy</h2>
         <p>
-          We may update this Cookie Policy from time to time. Any changes will be
-          posted on this page with an updated revision date.
+          We may update this Cookie Policy from time to time. Any changes will
+          be posted on this page with an updated revision date.
         </p>
       </section>
     </div>
