@@ -3,8 +3,13 @@
 ===================== */
 .myblogs {
   display: grid;
-  gap: 1.8rem;
-  padding: 1rem;
+  gap: 2rem;
+  padding: 0.8rem 0.4rem;
+}
+
+.myblogs .blog-manager {
+  display: grid;
+  gap: 1.5rem;
 }
 
 /* Header */
@@ -13,46 +18,81 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.myblogs__header h1 {
+  margin-bottom: 0.45rem;
 }
 
 /* Blog Manager Form */
 .myblogs .blog-manager__form {
-  padding: 1.5rem;
+  display: grid;
+  gap: 1.4rem;
+  padding: 1.7rem;
+  border-radius: 18px;
+  border: 1px solid #d5e3f6;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.myblogs .blog-manager__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.myblogs .blog-manager__fields {
+  display: grid;
+  gap: 1rem;
+}
+
+.myblogs .blog-manager__field {
+  display: grid;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #162847;
 }
 
 /* Form Inputs */
 .myblogs input,
 .myblogs textarea {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 0.6rem 0.8rem;
+  border: 1px solid #c8d8ef;
+  border-radius: 12px;
+  padding: 0.75rem 0.92rem;
   font-size: 0.95rem;
   width: 100%;
   box-sizing: border-box;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: #fcfeff;
+}
+
+.myblogs .blog-manager__field input,
+.myblogs .blog-manager__field textarea {
+  resize: vertical;
 }
 
 .myblogs input:focus,
 .myblogs textarea:focus {
   outline: none;
   border-color: #1163ff;
-  box-shadow: 0 0 0 3px rgba(17, 99, 255, 0.15);
+  box-shadow: 0 0 0 4px rgba(17, 99, 255, 0.14);
 }
 
 /* Make the Create/Update Post button smaller */
 .myblogs .blog-manager__fields button {
   margin-top: 0.5rem;
   width: fit-content; /* keeps it tight to text */
-  padding: 1rem 1.5rem; /* smaller padding */
-  font-size: 1rem; /* slightly smaller text */
+  padding: 0.85rem 1.45rem;
+  font-size: 0.95rem;
 }
 
 /* Blog List Grid */
 .myblogs .blog-manager__list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.2rem;
+  gap: 1.25rem;
   margin-top: 1rem;
 }
 
@@ -60,18 +100,19 @@
 .myblogs .blog-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   cursor: pointer;
-  border-radius: 12px;
-  background: #fff;
-  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  border: 1px solid #d4e1f3;
+  padding: 1.05rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .myblogs .blog-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(16, 36, 94, 0.15);
-  background: #f8faff;
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(16, 36, 94, 0.16);
+  background: linear-gradient(180deg, #ffffff 0%, #f2f7ff 100%);
 }
 
 /* Card Title & Text */
@@ -94,9 +135,12 @@
 
 /* Card Meta */
 .myblogs .blog-card__meta {
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-bottom: 0.3rem;
+  font-size: 0.77rem;
+  color: #4d6690;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 
 /* Card Actions */
@@ -111,22 +155,28 @@
 .myblogs__empty {
   text-align: center;
   padding: 3rem;
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed #c8d7ee;
   border-radius: 16px;
-  background: #f1f5ff;
+  background: #f3f8ff;
   color: #64748b;
   font-size: 1rem;
   transition: background 0.2s ease;
 }
 
 .myblogs__empty:hover {
-  background: #e0e7ff;
+  background: #e8f1ff;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .myblogs {
+    gap: 1.5rem;
+    padding: 0;
+  }
+
   .myblogs .blog-manager__form {
     padding: 1rem;
+    border-radius: 14px;
   }
 
   .myblogs .blog-manager__list {
@@ -136,5 +186,10 @@
 
   .myblogs .blog-card {
     padding: 0.8rem;
+  }
+
+  .myblogs .blog-card__actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }

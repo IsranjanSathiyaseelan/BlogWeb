@@ -6,35 +6,26 @@ import type {
   CreateBlogPostInput,
   UpdateBlogPostInput,
 } from "../../types/blog";
+import * as postsApi from "../../api/posts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { useBlog } from "./blogStore";
 
-const POSTS_STORAGE_KEY = "blogweb_posts";
-
-const createSlug = (title: string) =>
-  title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-
 export const BlogProvider = ({ children }: { children: ReactNode }) => {
-  const [posts, setPosts] = useState<BlogPost[]>(() => {
-    const stored = localStorage.getItem(POSTS_STORAGE_KEY);
-
-    if (!stored) return BLOG_POSTS;
-
-    try {
-      return JSON.parse(stored) as BlogPost[];
-    } catch {
-      return BLOG_POSTS;
-    }
-  });
+  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
 
   useEffect(() => {
-    localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
-  }, [posts]);
+    const loadPosts = async () => {
+      try {
+        const backendPosts = await postsApi.getPosts();
+        setPosts(backendPosts);
+      } catch (error) {
+        console.error("Unable to load blog posts from backend:", error);
+      }
+    };
+
+    loadPosts();
+  }, []);
 
   const featuredPosts = posts.filter((post) => post.featured);
 
@@ -46,46 +37,25 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
     [posts],
   );
 
-  const createPost = useCallback(
-    (post: CreateBlogPostInput) => {
-      const nextId = Math.max(0, ...posts.map((item) => item.id)) + 1;
-
-      const nextPost: BlogPost = {
-        ...post,
-        id: nextId,
-        slug: createSlug(post.title),
-        publishedAt: new Date().toISOString().split("T")[0],
-        featured: false,
-      };
-
-      setPosts((current) => [nextPost, ...current]);
-
-      return nextPost;
-    },
-    [posts],
-  );
-
-  const updatePost = useCallback((id: number, updates: UpdateBlogPostInput) => {
-    let updatedPost: BlogPost | undefined;
-
-    setPosts((current) =>
-      current.map((post) => {
-        if (post.id !== id) return post;
-
-        updatedPost = {
-          ...post,
-          ...updates,
-          slug: updates.title ? createSlug(updates.title) : post.slug,
-        };
-
-        return updatedPost;
-      }),
-    );
-
-    return updatedPost;
+  const createPost = useCallback(async (post: CreateBlogPostInput) => {
+    const created = await postsApi.createPost(post);
+    setPosts((current) => [created, ...current]);
+    return created;
   }, []);
 
-  const deletePost = useCallback((id: number) => {
+  const updatePost = useCallback(
+    async (id: number, updates: UpdateBlogPostInput) => {
+      const updated = await postsApi.updatePost(id, updates);
+      setPosts((current) =>
+        current.map((post) => (post.id === id ? updated : post)),
+      );
+      return updated;
+    },
+    [],
+  );
+
+  const deletePost = useCallback(async (id: number) => {
+    await postsApi.deletePost(id);
     setPosts((current) => current.filter((post) => post.id !== id));
   }, []);
 

@@ -18,11 +18,17 @@ const startServer = async () => {
     console.log(`Server running on http://localhost:${port}`);
   });
 
-  // graceful shutdown
-  process.on("SIGINT", async () => {
-    console.log("\nShutting down...");
+  const shutdown = async (signal: string) => {
+    console.log(`\nReceived ${signal}, shutting down...`);
     await pool.end();
     process.exit(0);
+  };
+
+  process.on("SIGINT", () => shutdown("SIGINT"));
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("unhandledRejection", async (reason) => {
+    console.error("Unhandled rejection:", reason);
+    await shutdown("unhandledRejection");
   });
 };
 

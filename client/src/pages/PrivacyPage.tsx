@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 import "./pages.css";
+import "./PrivacyPage.css";
 
 const PrivacyPage = () => {
-    useEffect(() => {
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="page">
-      <section className="content-panel article">
+      <section className="content-panel privacy-article">
         <h1>Privacy Policy</h1>
-        <p className="article-meta">Last updated: April 2026</p>
+        <p className="privacy-meta">Last updated: April 2026</p>
 
         <p>
           This Privacy Policy explains how BlogWeb collects, uses, and protects
@@ -54,8 +55,8 @@ const PrivacyPage = () => {
 
         <h2>Changes to This Policy</h2>
         <p>
-          We may update this Privacy Policy from time to time. Any changes will be
-          posted on this page with an updated revision date.
+          We may update this Privacy Policy from time to time. Any changes will
+          be posted on this page with an updated revision date.
         </p>
       </section>
     </div>

@@ -54,7 +54,6 @@ const MyBlogs = () => {
       imageUrl: form.imageUrl.trim(),
       category: form.category.trim() || "Product",
       readMinutes: Number(form.readMinutes) || 5,
-      author: user.name,
       content: form.content
         .split(/\r?\n/)
         .map((line) => line.trim())

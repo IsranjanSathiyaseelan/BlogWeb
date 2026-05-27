@@ -1,0 +1,35 @@
+.about-panel {
+  width: min(860px, 100%);
+  margin: 0 auto;
+}
+
+.about-panel p {
+  color: #2d415d;
+  line-height: 1.85;
+}
+
+.about-panel h1 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  margin-bottom: 1rem;
+}
+
+.about-panel h1 + p {
+  font-size: 1.06rem;
+}
+
+.about-list {
+  margin: 0.9rem 0 1.5rem;
+  padding-left: 1.35rem;
+  color: #2f425c;
+  line-height: 1.8;
+}
+
+.about-list li {
+  margin-bottom: 0.35rem;
+}
+
+@media (max-width: 768px) {
+  .about-panel h1 {
+    margin-bottom: 0.8rem;
+  }
+}
