@@ -1,5 +1,18 @@
 ﻿import { Request, Response } from "express";
-import { pool } from "../config/db";
+import { initializeDb, pool } from "../config/db";
+
+const runBlogQuery = async (queryText: string, values: unknown[] = []) => {
+  try {
+    return await pool.query(queryText, values);
+  } catch (error: any) {
+    if (error?.code === "42P01") {
+      await initializeDb();
+      return pool.query(queryText, values);
+    }
+
+    throw error;
+  }
+};
 
 // ----------------------
 // Slug helpers
@@ -17,7 +30,7 @@ const generateUniqueSlug = async (title: string) => {
   let counter = 1;
 
   while (true) {
-    const existing = await pool.query(
+    const existing = await runBlogQuery(
       `SELECT id FROM blog_posts WHERE slug = $1 LIMIT 1`,
       [slug]
     );
@@ -39,7 +52,6 @@ const formatPost = (row: any) => ({
   title: row.title,
   excerpt: row.excerpt,
   content: row.content,
-  imageUrl: row.image_url,
   author: row.author_name ?? `Author ${row.author_id}`,
   authorId: row.author_id,
   publishedAt: row.published_at?.toISOString().split("T")[0] || "",
@@ -56,7 +68,7 @@ export const getAllPosts = async (req: Request, res: Response) => {
     const limit = Number(req.query.limit) || 10;
     const offset = Number(req.query.offset) || 0;
 
-    const result = await pool.query(
+    const result = await runBlogQuery(
       `SELECT bp.*, u.name AS author_name
        FROM blog_posts bp
        LEFT JOIN users u ON u.id = bp.author_id
@@ -78,7 +90,7 @@ export const getPostBySlug = async (req: Request, res: Response) => {
   try {
     const { slug } = req.params;
 
-    const result = await pool.query(
+    const result = await runBlogQuery(
       `SELECT bp.*, u.name AS author_name
        FROM blog_posts bp
        LEFT JOIN users u ON u.id = bp.author_id
@@ -108,34 +120,18 @@ export const createPost = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const {
-      title,
-      excerpt,
-      content,
-      imageUrl,
-      readMinutes,
-      category,
-      featured = false,
-    } = req.body;
+    const { title, excerpt, content, readMinutes, category, featured = false } = req.body;
 
-    if (
-      !title ||
-      !excerpt ||
-      !content ||
-      !imageUrl ||
-      typeof readMinutes !== "number" ||
-      !category
-    ) {
+    if (!title || !excerpt || !content || typeof readMinutes !== "number" || !category) {
       return res.status(400).json({ error: "Invalid fields" });
     }
-
     const slug = await generateUniqueSlug(title);
 
-    const result = await pool.query(
+    const result = await runBlogQuery(
       `INSERT INTO blog_posts (slug, title, excerpt, content, image_url, author_id, read_minutes, category, featured)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *, (SELECT name FROM users WHERE id = $6) AS author_name`,
-      [slug, title, excerpt, content, imageUrl, user.id, readMinutes, category, featured]
+      [slug, title, excerpt, content, "", user.id, readMinutes, category, featured]
     );
 
     res.status(201).json(formatPost(result.rows[0]));
@@ -157,7 +153,7 @@ export const updatePost = async (req: Request, res: Response) => {
     if (Number.isNaN(id))
       return res.status(400).json({ error: "Invalid id" });
 
-    const existingPost = await pool.query(
+    const existingPost = await runBlogQuery(
       `SELECT * FROM blog_posts WHERE id = $1 LIMIT 1`,
       [id]
     );
@@ -177,25 +173,23 @@ export const updatePost = async (req: Request, res: Response) => {
       ? await generateUniqueSlug(updates.title)
       : post.slug;
 
-    const result = await pool.query(
+    const result = await runBlogQuery(
       `UPDATE blog_posts SET
          title = COALESCE($1, title),
          slug = COALESCE($2, slug),
          excerpt = COALESCE($3, excerpt),
          content = COALESCE($4, content),
-         image_url = COALESCE($5, image_url),
-         read_minutes = COALESCE($6, read_minutes),
-         category = COALESCE($7, category),
-         featured = COALESCE($8, featured),
+        read_minutes = COALESCE($5, read_minutes),
+        category = COALESCE($6, category),
+        featured = COALESCE($7, featured),
          updated_at = NOW()
-       WHERE id = $9
+       WHERE id = $8
        RETURNING *, (SELECT name FROM users WHERE id = author_id) AS author_name`,
       [
         updates.title,
         slug,
         updates.excerpt,
         updates.content,
-        updates.imageUrl,
         updates.readMinutes,
         updates.category,
         updates.featured,
@@ -222,7 +216,7 @@ export const deletePost = async (req: Request, res: Response) => {
     if (Number.isNaN(id))
       return res.status(400).json({ error: "Invalid id" });
 
-    const existingPost = await pool.query(
+    const existingPost = await runBlogQuery(
       `SELECT * FROM blog_posts WHERE id = $1 LIMIT 1`,
       [id]
     );
@@ -237,7 +231,7 @@ export const deletePost = async (req: Request, res: Response) => {
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    await pool.query(`DELETE FROM blog_posts WHERE id = $1`, [id]);
+    await runBlogQuery(`DELETE FROM blog_posts WHERE id = $1`, [id]);
 
     res.status(204).send();
   } catch (error) {
