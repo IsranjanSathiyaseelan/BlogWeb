@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { pool } from "../config/db";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret"; // use env in real app
+const JWT_SECRET = process.env.JWT_SECRET; // use env in real app
 
 // ----------------------
 // Helpers
@@ -13,9 +13,9 @@ const hashPassword = async (password: string): Promise<string> => {
   const salt = crypto.randomBytes(16).toString("hex");
 
   const derived = await new Promise<Buffer>((resolve, reject) => {
-    crypto.scrypt(password, salt, 64, (err, key) => {
+    crypto.scrypt(password, salt, 64, (err, derivedKey) => {
       if (err) reject(err);
-      else resolve(key as Buffer);
+      else resolve(derivedKey as Buffer);
     });
   });
 
@@ -26,30 +26,37 @@ const verifyPassword = async (
   password: string,
   storedHash: string
 ): Promise<boolean> => {
-  const [salt, key] = storedHash.split("$");
+  const [salt, keyHex] = storedHash.split("$");
 
-  if (!salt || !key) return false;
+  if (!salt || !keyHex) return false;
 
   const derived = await new Promise<Buffer>((resolve, reject) => {
-    crypto.scrypt(password, salt, 64, (err, key) => {
+    crypto.scrypt(password, salt, 64, (err, derivedKey) => {
       if (err) reject(err);
-      else resolve(key as Buffer);
+      else resolve(derivedKey as Buffer);
     });
   });
 
-  const expected = Buffer.from(key, "hex");
+  const expected = Buffer.from(keyHex, "hex");
+
+  // lengths must match for timingSafeEqual
+  if (derived.length !== expected.length) return false;
 
   return crypto.timingSafeEqual(derived, expected);
 };
 
-const createJwt = (payload: object) => {
+const createJwt = (payload: object): string => {
+  if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET environment variable is not set");
+  }
+
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: "7d",
   });
 };
 
 const sanitizeUser = (row: any) => ({
-  id: row.id,
+  id: Number(row.id),
   name: row.name,
   email: row.email,
   role: row.role,
