@@ -21,6 +21,7 @@ const Footer = () => {
           <div className="footer-column">
             <h4>Navigation</h4>
             <Link to="/">Home</Link>
+            <Link to="/all-blogs">All Blogs</Link>
             <Link to="/about">About</Link>
             <Link to="/signin">Sign In</Link>
             <Link to="/signup">Sign Up</Link>
