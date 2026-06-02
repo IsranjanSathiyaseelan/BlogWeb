@@ -2,7 +2,6 @@ import type {
   ButtonHTMLAttributes,
   CSSProperties,
   FormEvent,
-  MouseEvent,
   ReactNode,
 } from "react";
 
@@ -36,11 +35,12 @@ export interface BlogCardProps {
   title: string;
   description: string;
   imageUrl: string;
-  author: string;
   link: string;
+  category?: string;
+  publishedAt: string;
+  readMinutes: number;
+  layout?: "vertical" | "horizontal";
 }
-
-export type BlogCardMouseEvent = MouseEvent<HTMLDivElement, globalThis.MouseEvent>;
 
 export type SignFormEvent = FormEvent<HTMLFormElement>;
 

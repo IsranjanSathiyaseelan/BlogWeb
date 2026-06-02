@@ -16,12 +16,16 @@ export interface BlogPost {
 
 export type CreateBlogPostInput = Omit<
   BlogPost,
-  "id" | "slug" | "publishedAt" | "featured" | "author"
->;
+  "id" | "slug" | "publishedAt" | "featured" | "author" | "imageUrl"
+> & {
+  imageUrl?: string;
+};
 
 export type UpdateBlogPostInput = Partial<
-  Omit<BlogPost, "id" | "slug" | "publishedAt" | "author">
->;
+  Omit<BlogPost, "id" | "slug" | "publishedAt" | "author" | "imageUrl">
+> & {
+  imageUrl?: string;
+};
 
 export interface BlogContextValue {
   posts: BlogPost[];
@@ -36,7 +40,6 @@ export interface BlogContextValue {
 export interface BlogFormState {
   title: string;
   excerpt: string;
-  imageUrl: string;
   category: string;
   readMinutes: string;
   content: string;
