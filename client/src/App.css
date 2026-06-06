@@ -6,5 +6,6 @@
 
 .app-main {
   flex: 1;
-  padding-top: 64px;
+  padding-top: 88px; /* leave space for sticky navbar */
+  background: var(--color-bg);
 }
