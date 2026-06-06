@@ -65,6 +65,7 @@ const SignUp = ({ onClose }: SignUpProps) => {
             className="auth-input"
             required
           />
+          <p className="auth-hint">Password must be at least 6 characters.</p>
         </div>
 
         {error && <p className="auth-error">{error}</p>}
