@@ -10,6 +10,7 @@ import "./Navbar.css";
 
 const baseNavItems: NavItem[] = [
   { label: "Home", to: "/" },
+  { label: "Blogs", to: "/all-blogs" },
   { label: "About", to: "/about" },
 ];
 
