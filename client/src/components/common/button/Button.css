@@ -11,6 +11,11 @@
     border-color 160ms ease, box-shadow 160ms ease;
 }
 
+.button:focus-visible {
+  outline: 3px solid rgba(79, 70, 229, 0.18);
+  outline-offset: 3px;
+}
+
 .button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
@@ -26,17 +31,17 @@
 }
 
 .button--primary {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-2));
   color: #ffffff;
-  box-shadow: 0 18px 50px rgba(79, 70, 229, 0.14);
-  padding: 0.95rem 1.6rem;
+  box-shadow: 0 18px 50px rgba(79, 70, 229, 0.12);
+  padding: 0.85rem 1.4rem;
 }
 
 .button--secondary {
-  background: #f8fafc;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  color: #111827;
-  padding: 0.95rem 1.6rem;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  color: var(--color-text);
+  padding: 0.7rem 1.2rem;
 }
 
 .button--outline {
