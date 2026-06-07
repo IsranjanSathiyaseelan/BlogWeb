@@ -25,48 +25,182 @@ const AboutPage = () => {
         ← Back
       </Button>
 
-      <section className="content-panel about-panel">
-        <h1>About BlogWeb</h1>
+      <section className="about-hero content-panel">
+        <div className="about-hero__copy">
+          <p className="about-eyebrow">Who we are</p>
+          <h1>Our Story</h1>
+          <p className="about-lead">
+            BlogWeb is a focused publishing space for practical ideas,
+            thoughtful product work, and modern engineering habits that help
+            builders ship with clarity.
+          </p>
 
-        <p>
-          BlogWeb is a clean, focused platform built for sharing practical ideas
-          about product development, software engineering, and modern digital
-          experiences. Our goal is to provide content that is not only
-          insightful but immediately useful for real-world projects.
+          <div className="about-hero__actions">
+            <Button type="button" onClick={() => navigate("/")}>
+              Explore the blog
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate("/signup")}
+            >
+              Join the community
+            </Button>
+          </div>
+        </div>
+
+        <aside className="about-hero__panel" aria-label="BlogWeb highlights">
+          <div className="about-hero__panel-top">
+            <span className="about-hero__pill">Built for builders</span>
+            <strong>Designing for useful reading</strong>
+            <p>
+              Clear structure, readable layouts, and a calm visual system keep
+              the focus on ideas instead of interface noise.
+            </p>
+          </div>
+
+          <div className="about-hero__stats">
+            <article>
+              <span>Readable</span>
+              <strong>Fast scanning</strong>
+            </article>
+            <article>
+              <span>Focused</span>
+              <strong>Practical topics</strong>
+            </article>
+            <article>
+              <span>Responsive</span>
+              <strong>Mobile first</strong>
+            </article>
+          </div>
+        </aside>
+      </section>
+
+      <section className="about-split content-panel">
+        <div className="about-split__copy">
+          <p className="about-section-label">Our mission</p>
+          <h2>Help readers build better products with fewer distractions.</h2>
+          <p>
+            We publish concise, actionable content for engineers, designers, and
+            product-minded builders. Each article is written to be useful in the
+            real world, not just impressive on paper.
+          </p>
+          <p>
+            The result is a calmer reading experience with clear hierarchy,
+            purposeful spacing, and a layout that gives each idea room to land.
+          </p>
+        </div>
+
+        <div className="about-split__visual" aria-hidden="true">
+          <div className="about-visual-card about-visual-card--main">
+            <span className="about-visual-card__eyebrow">Editorial focus</span>
+            <strong>Clarity over clutter</strong>
+            <p>
+              Every page is designed to guide attention without overwhelming the
+              reader.
+            </p>
+          </div>
+          <div className="about-visual-card about-visual-card--accent">
+            <span className="about-visual-card__eyebrow">Experience</span>
+            <strong>Polished interactions</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="about-values">
+        <div className="section-head about-values__head">
+          <div>
+            <p className="about-section-label">Core values</p>
+            <h2>What shapes the experience</h2>
+          </div>
+        </div>
+
+        <div className="about-values__grid">
+          <article className="about-value-card content-panel">
+            <span className="about-value-card__index">01</span>
+            <h3>Clarity</h3>
+            <p>
+              Strong typography and structured content make it easier to scan,
+              read, and remember what matters.
+            </p>
+          </article>
+
+          <article className="about-value-card content-panel">
+            <span className="about-value-card__index">02</span>
+            <h3>Usefulness</h3>
+            <p>
+              We focus on practical ideas that readers can apply immediately in
+              their own products and workflows.
+            </p>
+          </article>
+
+          <article className="about-value-card content-panel">
+            <span className="about-value-card__index">03</span>
+            <h3>Consistency</h3>
+            <p>
+              Reusable components, responsive behavior, and a cohesive visual
+              system keep the experience dependable.
+            </p>
+          </article>
+        </div>
+      </section>
+
+<section className="about-team content-panel">
+  <div className="section-head about-team__head">
+    <div>
+      <p className="about-section-label">Meet the creator</p>
+      <h2>The person behind the publication</h2>
+    </div>
+
+    <p className="about-team__intro">
+      Every article, feature, and design decision is crafted independently from research and writing to development and user experience with a commitment to thoughtful storytelling and quality digital publishing.
+    </p>
+  </div>
+
+  <div className="about-team__grid">
+    <article className="about-team-card">
+      <div className="about-team-card__avatar">
+        <span>IR</span>
+      </div>
+
+      <div className="about-team-card__content">
+        <h3>Isranjan</h3>
+        <p className="about-team-card__role">
+          Founder · Designer · Developer
         </p>
 
-        <p>
-          We publish actionable guides, deep dives, and thoughtful perspectives
-          for engineers, designers, and ambitious builders who want to improve
-          their craft. Whether you're learning the basics or refining advanced
-          skills, BlogWeb is designed to support continuous growth.
+        <p className="about-team-card__bio">
+          Builds and maintains the publication, combining design, engineering,
+          and editorial thinking to create a fast, accessible, and engaging
+          reading experience.
         </p>
+      </div>
+    </article>
+  </div>
+</section>
 
-        <p>
-          This project is also a demonstration of a well-structured React
-          application. It showcases reusable components, route-based navigation,
-          and shared state management using modern development practices.
-        </p>
+      <section className="about-cta content-panel">
+        <div>
+          <p className="about-section-label">Next step</p>
+          <h2>Want to keep reading?</h2>
+          <p>
+            Explore the latest stories or create an account to join the
+            community of builders and readers.
+          </p>
+        </div>
 
-        <p>Key features of BlogWeb include:</p>
-
-        <ul className="about-list">
-          <li>Well-organized blog posts with clean UI</li>
-          <li>Built using modern React patterns and best practices</li>
-          <li>Reusable components for scalability</li>
-          <li>Route-based page navigation</li>
-          <li>Responsive design for all devices</li>
-        </ul>
-
-        <p>
-          BlogWeb is more than just a blog - it’s a learning project, a
-          knowledge hub, and a foundation you can build upon to create your own
-          full-stack applications.
-        </p>
-
-        <p>
-          We believe in simplicity, clarity, and building things that matter.
-        </p>
+        <div className="about-cta__actions">
+          <Button type="button" onClick={() => navigate("/")}>
+            Browse posts
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate("/signup")}
+          >
+            Get started
+          </Button>
+        </div>
       </section>
     </div>
   );
