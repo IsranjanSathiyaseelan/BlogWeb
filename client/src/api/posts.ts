@@ -1,10 +1,12 @@
 import type { BlogPost } from "../types/blog";
 import api from "./axios";
+import { images } from "../assets/asset";
 
 export type CreateBlogPostPayload = Omit<
   BlogPost,
-  "id" | "slug" | "publishedAt" | "featured" | "author"
+  "id" | "slug" | "publishedAt" | "featured" | "author" | "imageUrl"
 > & {
+  imageUrl?: string;
   content: string[];
 };
 
@@ -25,7 +27,7 @@ const normalizePost = (post: any): BlogPost => ({
           .map((line: string) => line.trim())
           .filter(Boolean)
       : post.content,
-  imageUrl: post.imageUrl ?? post.image_url,
+  imageUrl: post.imageUrl ?? post.image_url ?? images.post,
   author: post.author ?? post.author_name ?? `Author ${post.author_id}`,
   publishedAt: post.publishedAt ?? post.published_at,
   readMinutes: post.readMinutes ?? post.read_minutes,
