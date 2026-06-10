@@ -1,0 +1,230 @@
+.allblogs-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.allblogs-hero,
+.allblogs-search,
+.allblogs-empty-state {
+  margin-top: 0;
+}
+
+.allblogs-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at top right, rgba(17, 99, 255, 0.14), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fbff 45%, #eef4ff 100%);
+}
+
+.allblogs-hero__copy {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.allblogs-eyebrow,
+.allblogs-label {
+  margin: 0;
+  color: #1163ff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.allblogs-hero h1,
+.allblogs-toolbar h2 {
+  margin: 0;
+  color: #0f172a;
+  letter-spacing: -0.05em;
+  line-height: 1.02;
+}
+
+.allblogs-hero h1 {
+  max-width: 14ch;
+  font-size: clamp(2.4rem, 4vw, 4.4rem);
+}
+
+.allblogs-subtitle {
+  margin: 0;
+  max-width: 56ch;
+  color: #475569;
+  line-height: 1.75;
+}
+
+.allblogs-search {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.1rem 1.25rem 1.25rem;
+}
+
+.allblogs-search__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.allblogs-result-count {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.92rem;
+}
+
+.allblogs-search-bar {
+  display: grid;
+  gap: 0;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: none;
+}
+
+.allblogs-search-field {
+  position: relative;
+  width: min(100%, 760px);
+  display: flex;
+  align-items: center;
+  height: auto;
+  min-height: 0;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+
+.allblogs-search-field:focus-within {
+  border-color: rgba(17, 99, 255, 0.35);
+  box-shadow: 0 0 0 4px rgba(17, 99, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.allblogs-search-field__icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+  color: #64748b;
+}
+
+.allblogs-search-field:focus-within .allblogs-search-field__icon {
+  color: #1163ff;
+}
+
+.allblogs-search-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #0f172a;
+  font: inherit;
+  font-size: 1rem;
+  padding: 0.95rem 0.8rem 0.95rem 0.8rem;
+}
+
+.allblogs-search-field input::placeholder {
+  color: #94a3b8;
+}
+
+.allblogs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.allblogs-empty-state {
+  display: grid;
+  gap: 0.8rem;
+  place-items: center;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border-radius: 26px;
+}
+
+@media (max-width: 900px) {
+  .allblogs-hero,
+  .allblogs-search {
+    padding: 1.35rem;
+  }
+
+  .allblogs-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .allblogs-search__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .allblogs-page {
+    gap: 1rem;
+  }
+
+  .allblogs-hero,
+  .allblogs-search {
+    padding: 1.1rem;
+  }
+
+  .allblogs-search-field {
+    width: 100%;
+  }
+
+  .allblogs-search-field {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .allblogs-hero h1 {
+    max-width: none;
+    font-size: clamp(2.1rem, 11vw, 3rem);
+  }
+
+  .allblogs-search-field {
+    min-height: 3.2rem;
+    border-radius: 18px;
+    padding-inline: 0.75rem;
+  }
+
+  .allblogs-search-field input {
+    font-size: 0.95rem;
+    padding: 0.78rem 2.6rem 0.78rem 0.55rem;
+  }
+
+  .allblogs-search-field__clear {
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .allblogs-chip {
+    padding: 0.72rem 0.9rem;
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .allblogs-hero,
+  .allblogs-toolbar {
+    padding: 1rem;
+  }
+
+  .allblogs-filter-bar {
+    padding: 0.9rem;
+    border-radius: 22px;
+  }
+
+  .allblogs-filter-summary {
+    font-size: 0.84rem;
+  }
+}
