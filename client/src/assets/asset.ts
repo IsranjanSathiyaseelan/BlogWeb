@@ -1,5 +1,4 @@
-import post from './Post.png';
-
 export const images = {
-  post,
+  post:
+    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 675'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23e8f0fe'/><stop offset='55%' stop-color='%23d2e3fc'/><stop offset='100%' stop-color='%23ffffff'/></linearGradient></defs><rect width='1200' height='675' fill='url(%23g)'/><circle cx='250' cy='170' r='120' fill='%231a73e8' fill-opacity='0.12'/><circle cx='945' cy='175' r='150' fill='%230f9d58' fill-opacity='0.11'/><rect x='110' y='375' width='980' height='34' rx='17' fill='%231a73e8' fill-opacity='0.14'/><rect x='110' y='435' width='720' height='22' rx='11' fill='%23616161' fill-opacity='0.16'/><rect x='110' y='475' width='540' height='22' rx='11' fill='%23616161' fill-opacity='0.12'/><rect x='110' y='535' width='260' height='54' rx='27' fill='%231a73e8' fill-opacity='0.92'/></svg>",
 };
