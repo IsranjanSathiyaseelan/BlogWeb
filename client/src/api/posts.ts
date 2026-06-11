@@ -1,5 +1,6 @@
 import type { BlogPost } from "../types/blog";
 import api from "./axios";
+import { ENDPOINTS } from "./endpoints";
 import { images } from "../assets/asset";
 
 export type CreateBlogPostPayload = Omit<
@@ -36,19 +37,19 @@ const normalizePost = (post: any): BlogPost => ({
 });
 
 export const getPosts = async (): Promise<BlogPost[]> => {
-  const response = await api.get("/posts");
+  const response = await api.get(ENDPOINTS.posts.list);
   return (response.data as any[]).map(normalizePost);
 };
 
 export const getPostBySlug = async (slug: string): Promise<BlogPost> => {
-  const response = await api.get(`/posts/${slug}`);
+  const response = await api.get(ENDPOINTS.posts.detailBySlug(slug));
   return normalizePost(response.data);
 };
 
 export const createPost = async (
   payload: CreateBlogPostPayload,
 ): Promise<BlogPost> => {
-  const response = await api.post("/posts", {
+  const response = await api.post(ENDPOINTS.posts.list, {
     ...payload,
     content: serializeContent(payload.content),
   });
@@ -66,10 +67,10 @@ export const updatePost = async (
       : {}),
   };
 
-  const response = await api.put(`/posts/${id}`, body);
+  const response = await api.put(ENDPOINTS.posts.detailById(id), body);
   return normalizePost(response.data);
 };
 
 export const deletePost = async (id: number): Promise<void> => {
-  await api.delete(`/posts/${id}`);
+  await api.delete(ENDPOINTS.posts.detailById(id));
 };
