@@ -10,7 +10,6 @@ import "./MyBlogs.css";
 const initialForm = {
   title: "",
   excerpt: "",
-  imageUrl: "",
   category: "Product",
   readMinutes: "5",
   content: "",
@@ -51,7 +50,6 @@ const MyBlogs = () => {
     const payload = {
       title: form.title.trim(),
       excerpt: form.excerpt.trim(),
-      imageUrl: form.imageUrl.trim(),
       category: form.category.trim() || "Product",
       readMinutes: Number(form.readMinutes) || 5,
       content: form.content
@@ -78,7 +76,6 @@ const MyBlogs = () => {
     setForm({
       title: post.title,
       excerpt: post.excerpt,
-      imageUrl: post.imageUrl,
       category: post.category,
       readMinutes: String(post.readMinutes),
       content: post.content.join("\n"),
@@ -148,17 +145,6 @@ const MyBlogs = () => {
                 value={form.excerpt}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, excerpt: e.target.value }))
-                }
-                required
-              />
-            </label>
-
-            <label className="blog-manager__field">
-              Image URL
-              <input
-                value={form.imageUrl}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, imageUrl: e.target.value }))
                 }
                 required
               />
