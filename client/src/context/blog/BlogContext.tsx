@@ -18,7 +18,9 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
     const loadPosts = async () => {
       try {
         const backendPosts = await postsApi.getPosts();
-        setPosts(backendPosts);
+        if (backendPosts.length > 0) {
+          setPosts(backendPosts);
+        }
       } catch (error) {
         console.error("Unable to load blog posts from backend:", error);
       }
