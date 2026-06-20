@@ -2,8 +2,7 @@ import crypto from "crypto";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { pool } from "../config/db";
-
-const JWT_SECRET = process.env.JWT_SECRET; // use env in real app
+import { JWT_SECRET } from "../config/env";
 
 // ----------------------
 // Helpers
@@ -59,7 +58,6 @@ const sanitizeUser = (row: any) => ({
   id: Number(row.id),
   name: row.name,
   email: row.email,
-  role: row.role,
   createdAt:
     typeof row.created_at === "string"
       ? row.created_at
@@ -112,11 +110,7 @@ export const signupUser = async (req: Request, res: Response) => {
     );
 
     const user = sanitizeUser(result.rows[0]);
-    const token = createJwt({
-      id: user.id,
-      role: user.role,
-      email: user.email,
-    });
+    const token = createJwt({ id: user.id, email: user.email });
 
     return res.status(201).json({
       token,
@@ -161,11 +155,7 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const token = createJwt({
-      id: user.id,
-      role: user.role,
-      email: user.email,
-    });
+    const token = createJwt({ id: user.id, email: user.email });
 
     return res.status(200).json({
       token,

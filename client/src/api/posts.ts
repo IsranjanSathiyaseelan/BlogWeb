@@ -46,6 +46,11 @@ export const getPostBySlug = async (slug: string): Promise<BlogPost> => {
   return normalizePost(response.data);
 };
 
+export const getMyPosts = async (): Promise<BlogPost[]> => {
+  const response = await api.get(ENDPOINTS.posts.me);
+  return (response.data as any[]).map(normalizePost);
+};
+
 export const createPost = async (
   payload: CreateBlogPostPayload,
 ): Promise<BlogPost> => {

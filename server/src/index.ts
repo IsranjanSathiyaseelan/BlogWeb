@@ -1,8 +1,7 @@
 import "dotenv/config";
 import { app } from "./app";
 import { checkDbConnection, initializeDb, pool } from "./config/db";
-
-const port = Number(process.env.PORT) || 3000;
+import { port } from "./config/env";
 
 const startServer = async () => {
   const connected = await checkDbConnection();

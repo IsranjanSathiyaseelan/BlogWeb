@@ -1,8 +1,9 @@
 import { Pool } from "pg";
+import { databaseUrl } from "./env";
 
 // PostgreSQL connection pool
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: databaseUrl,
 });
 
 // Check DB connection
@@ -27,7 +28,6 @@ export const initializeDb = async (): Promise<void> => {
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
-        role TEXT NOT NULL DEFAULT 'READER',
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
