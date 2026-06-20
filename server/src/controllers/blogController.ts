@@ -84,6 +84,33 @@ export const getAllPosts = async (req: Request, res: Response) => {
 };
 
 // ----------------------
+// Get current user posts
+// ----------------------
+export const getUserPosts = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (!user?.id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const result = await runBlogQuery(
+      `SELECT bp.*, u.name AS author_name
+       FROM blog_posts bp
+       LEFT JOIN users u ON u.id = bp.author_id
+       WHERE bp.author_id = $1
+       ORDER BY bp.published_at DESC`,
+      [user.id]
+    );
+
+    res.json(result.rows.map(formatPost));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Unable to fetch your posts" });
+  }
+};
+
+// ----------------------
 // Get post by slug
 // ----------------------
 export const getPostBySlug = async (req: Request, res: Response) => {
@@ -164,7 +191,7 @@ export const updatePost = async (req: Request, res: Response) => {
 
     const post = existingPost.rows[0];
 
-    if (post.author_id !== user.id && user.role !== "ADMIN") {
+    if (post.author_id !== user.id && !user.isAdmin) {
       return res.status(403).json({ error: "Forbidden" });
     }
 
@@ -227,7 +254,7 @@ export const deletePost = async (req: Request, res: Response) => {
 
     const post = existingPost.rows[0];
 
-    if (user.role !== "ADMIN" && post.author_id !== user.id) {
+    if (!user.isAdmin && post.author_id !== user.id) {
       return res.status(403).json({ error: "Forbidden" });
     }
 

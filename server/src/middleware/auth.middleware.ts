@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+import { ADMIN_JWT_SECRET, JWT_SECRET } from "../config/env";
 
 type JwtPayload = {
-  id: number | string;
-  role: string;
+  id?: number | string;
+  isAdmin?: boolean;
   email?: string;
 };
 
@@ -20,9 +19,10 @@ const authMiddleware = (
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  try {
-    const token = authHeader.split(" ")[1];
+  const token = authHeader.split(" ")[1];
 
+  // Try normal user token first
+  try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
     const userId =
@@ -31,12 +31,25 @@ const authMiddleware = (
         : decoded.id;
 
     req.user = {
-      id: userId as number,
-      role: decoded.role,
+      id: userId as number | undefined,
+      isAdmin: !!decoded.isAdmin,
       email: decoded.email,
     };
 
-    next();
+    return next();
+  } catch (err) {
+    // Not a normal user token, try admin token
+  }
+
+  try {
+    const decoded = jwt.verify(token, ADMIN_JWT_SECRET) as JwtPayload;
+
+    req.user = {
+      isAdmin: !!decoded.isAdmin,
+      email: decoded.email,
+    };
+
+    return next();
   } catch (error) {
     console.error("Invalid token:", error);
     return res.status(401).json({ error: "Invalid or expired token" });
