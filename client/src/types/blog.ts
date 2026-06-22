@@ -1,5 +1,24 @@
 export type BlogCategory = string;
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+}
+
+export interface Blog {
+  id: string;
+  title: string;
+  content: string[];
+  userId: string;
+  createdAt: Date;
+}
+
+export interface UserWithBlogs extends User {
+  blogs: Blog[];
+}
+
 export interface BlogPost {
   id: number;
   slug: string;
