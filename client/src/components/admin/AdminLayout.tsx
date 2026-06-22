@@ -33,14 +33,6 @@ const AdminLayout = () => {
           >
             User Management
           </NavLink>
-          <NavLink
-            to="/admin/settings"
-            className={({ isActive }) =>
-              `admin-sidebar__link ${isActive ? "admin-sidebar__link--active" : ""}`
-            }
-          >
-            Settings
-          </NavLink>
           <button
             type="button"
             className="admin-sidebar__logout"

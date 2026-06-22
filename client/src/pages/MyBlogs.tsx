@@ -144,31 +144,8 @@ const MyBlogs = () => {
     }
   };
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
-  };
-
   return (
     <div className="page myblogs">
-      <Button onClick={handleBack} className="back-button">
-        ← Back
-      </Button>
-
-      {/* Header */}
-      <section className="content-panel myblogs__header">
-        <div>
-          <h1>Welcome back, {user.name}</h1>
-          <p>
-            You are signed in as <strong>{user.email}</strong>.
-          </p>
-        </div>
-      </section>
-
-      {/* Form */}
       <section ref={formRef} className="content-panel blog-manager">
         <div className="blog-manager__form">
           <div className="blog-manager__header">
@@ -179,6 +156,7 @@ const MyBlogs = () => {
                 Cancel
               </Button>
             )}
+            {error && <div className="blog-manager__error">{error}</div>}
           </div>
 
           <form onSubmit={handleSubmit} className="blog-manager__fields">

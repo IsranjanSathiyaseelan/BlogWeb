@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import { fetchAdminMetrics } from "../../api/admin";
+import { getPosts } from "../../api/posts";
+import type { AdminStats } from "../../types/dashboard";
+import type { BlogPost } from "../../types/blog";
 import "./AdminDashboardPage.css";
 
 const AdminDashboardPage = () => {
-  const [metrics, setMetrics] = useState<{
-    totalUsers: number;
-    totalBlogs: number;
-  } | null>(null);
+  const [metrics, setMetrics] = useState<AdminStats | null>(null);
+  const [recentBlogs, setRecentBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const loadMetrics = async () => {
+    const loadDashboard = async () => {
       try {
-        const data = await fetchAdminMetrics();
-        setMetrics(data);
+        const [metricsData, posts] = await Promise.all([
+          fetchAdminMetrics(),
+          getPosts(),
+        ]);
+
+        setMetrics(metricsData);
+        setRecentBlogs(posts.slice(0, 5));
       } catch {
         setError("Unable to load dashboard metrics.");
       } finally {
@@ -22,7 +28,7 @@ const AdminDashboardPage = () => {
       }
     };
 
-    loadMetrics();
+    loadDashboard();
   }, []);
 
   return (
@@ -44,9 +50,9 @@ const AdminDashboardPage = () => {
 
       <section className="admin-table-section">
         <div className="admin-table-header">
-          <h2 className="admin-table-title">User Management</h2>
+          <h2 className="admin-table-title">Recent Blog Posts</h2>
           <p className="admin-table-subtitle">
-            Use the users page to review account activity and blog counts.
+            Review the latest blog posts published on the platform.
           </p>
         </div>
 
@@ -57,18 +63,29 @@ const AdminDashboardPage = () => {
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Status</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Category</th>
+                  <th>Published</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colSpan={3} className="admin-table-empty">
-                    Visit the User Management page to manage accounts and remove
-                    users.
-                  </td>
-                </tr>
+                {recentBlogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="admin-table-empty">
+                      No recent posts available.
+                    </td>
+                  </tr>
+                ) : (
+                  recentBlogs.map((post) => (
+                    <tr key={post.id}>
+                      <td>{post.title}</td>
+                      <td>{post.author}</td>
+                      <td>{post.category}</td>
+                      <td>{new Date(post.publishedAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

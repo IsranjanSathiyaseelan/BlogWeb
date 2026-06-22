@@ -10,13 +10,13 @@ import SignInPage from "../pages/auth/signin/SignInPage";
 import SignUpPage from "../pages/auth/signup/SignUpPage";
 import TermsPage from "../pages/TermsPage";
 import CookiesPage from "../pages/CookiesPage";
+import UserDashboard from "../pages/UserDashboard";
 import MainLayout from "../components/layouts/MainLayout";
 import AdminGuard from "../components/admin/AdminGuard";
 import AdminLayout from "../components/admin/AdminLayout";
 import AdminLoginPage from "../pages/admin/AdminLoginPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminUsersPage from "../pages/admin/AdminUsersPage";
-import AdminSettingsPage from "../pages/admin/AdminSettingsPage";
 
 const AppRoutes = () => {
   return (
@@ -30,7 +30,6 @@ const AppRoutes = () => {
           />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
-          <Route path="/admin/settings" element={<AdminSettingsPage />} />
         </Route>
       </Route>
 
@@ -42,6 +41,7 @@ const AppRoutes = () => {
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/myblog" element={<MyBlogs />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />

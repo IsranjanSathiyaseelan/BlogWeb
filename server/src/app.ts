@@ -4,6 +4,7 @@ import { getHealth } from "./controllers/healthController";
 import blogRoutes from "./routes/blogRoutes";
 import userRoutes from "./routes/userRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import dashboardRoutes from "./routes/dashboardRoutes";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.get("/api", getHealth);
 app.use("/api", blogRoutes);
 app.use("/api", userRoutes);
+app.use("/api", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
 
 export { app };

@@ -27,6 +27,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
 };
 
 export const getAdminMetrics = async (req: Request, res: Response) => {
+  void req;
   try {
     const userCountResult = await pool.query(`SELECT COUNT(*) AS total FROM users`);
     const blogCountResult = await pool.query(`SELECT COUNT(*) AS total FROM blog_posts`);
@@ -42,6 +43,7 @@ export const getAdminMetrics = async (req: Request, res: Response) => {
 };
 
 export const getAdminUsers = async (req: Request, res: Response) => {
+  void req;
   try {
     const result = await pool.query(
       `SELECT u.id, u.name, u.email, u.created_at, u.updated_at, COUNT(bp.id) AS blog_count
