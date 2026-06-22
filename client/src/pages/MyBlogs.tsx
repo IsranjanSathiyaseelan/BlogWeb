@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
 import { getMyPosts } from "../api/posts";
@@ -24,7 +24,7 @@ const MyBlogs = () => {
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<BlogFormState>(initialForm);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
