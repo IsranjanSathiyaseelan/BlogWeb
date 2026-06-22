@@ -1,7 +1,8 @@
-﻿import React, { useRef, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
+import { getMyPosts } from "../api/posts";
 import Button from "../components/common/button/Button";
 import type { BlogFormState, BlogPost } from "../types/blog";
 import "./pages.css";
@@ -17,13 +18,37 @@ const initialForm = {
 
 const MyBlogs = () => {
   const { user, loading } = useAuth();
-  const { posts, createPost, updatePost, deletePost } = useBlog();
+  const { createPost, updatePost, deletePost } = useBlog();
+  const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<BlogFormState>(initialForm);
   const navigate = useNavigate();
   const formRef = useRef<HTMLDivElement>(null);
 
-  if (loading) {
+  useEffect(() => {
+    if (!user) return;
+
+    const loadMyPosts = async () => {
+      setLoadingPosts(true);
+      setError("");
+
+      try {
+        const posts = await getMyPosts();
+        setUserPosts(posts);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load your blog posts.");
+      } finally {
+        setLoadingPosts(false);
+      }
+    };
+
+    loadMyPosts();
+  }, [user]);
+
+  if (loading || loadingPosts) {
     return (
       <div className="page myblogs">
         <section className="content-panel">
@@ -42,7 +67,22 @@ const MyBlogs = () => {
     setForm(initialForm);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const addOrUpdateLocalPosts = (updatedPost: BlogPost) => {
+    setUserPosts((current) => {
+      const existingIndex = current.findIndex(
+        (item) => item.id === updatedPost.id,
+      );
+      if (existingIndex >= 0) {
+        return current.map((item) =>
+          item.id === updatedPost.id ? updatedPost : item,
+        );
+      }
+
+      return [updatedPost, ...current];
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!form.content.trim()) return;
@@ -58,17 +98,24 @@ const MyBlogs = () => {
         .filter(Boolean),
     };
 
-    if (editingId !== null) {
-      updatePost(editingId, payload);
-    } else {
-      createPost(payload);
-    }
+    try {
+      if (editingId !== null) {
+        const updatedPost = await updatePost(editingId, payload);
+        addOrUpdateLocalPosts(updatedPost);
+      } else {
+        const createdPost = await createPost(payload);
+        addOrUpdateLocalPosts(createdPost);
+      }
 
-    resetForm();
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      setError("Unable to save the post. Please try again.");
+    }
   };
 
   const handleEdit = (id: number) => {
-    const post = posts.find((item) => item.id === id);
+    const post = userPosts.find((item) => item.id === id);
     if (!post) return;
 
     setEditingId(post.id);
@@ -82,10 +129,18 @@ const MyBlogs = () => {
     });
   };
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Delete this post? This action cannot be undone.")) {
-      deletePost(id);
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Delete this post? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      await deletePost(id);
+      setUserPosts((current) => current.filter((post) => post.id !== id));
       if (editingId === id) resetForm();
+    } catch (err) {
+      console.error(err);
+      setError("Unable to delete the post. Please try again.");
     }
   };
 
@@ -201,13 +256,13 @@ const MyBlogs = () => {
           <h2>Your blog posts</h2>
         </div>
 
-        {posts.length === 0 ? (
+        {userPosts.length === 0 ? (
           <div className="myblogs__empty">
             <p>No posts yet. Start creating your first blog 🚀</p>
           </div>
         ) : (
           <div className="blog-manager__list">
-            {posts.map((post: BlogPost) => (
+            {userPosts.map((post: BlogPost) => (
               <article key={post.id} className="blog-card">
                 <div>
                   <p className="blog-card__meta">{post.category}</p>

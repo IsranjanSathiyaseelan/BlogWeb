@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import AboutPage from "../pages/AboutPage";
 import AllBlogs from "../pages/AllBlogs";
 import BlogPostPage from "../pages/BlogPostPage";
@@ -11,10 +11,29 @@ import SignUpPage from "../pages/auth/signup/SignUpPage";
 import TermsPage from "../pages/TermsPage";
 import CookiesPage from "../pages/CookiesPage";
 import MainLayout from "../components/layouts/MainLayout";
+import AdminGuard from "../components/admin/AdminGuard";
+import AdminLayout from "../components/admin/AdminLayout";
+import AdminLoginPage from "../pages/admin/AdminLoginPage";
+import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
+import AdminUsersPage from "../pages/admin/AdminUsersPage";
+import AdminSettingsPage from "../pages/admin/AdminSettingsPage";
 
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route element={<AdminGuard />}>
+        <Route element={<AdminLayout />}>
+          <Route
+            path="/admin"
+            element={<Navigate to="/admin/dashboard" replace />}
+          />
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/settings" element={<AdminSettingsPage />} />
+        </Route>
+      </Route>
+
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/all-blogs" element={<AllBlogs />} />
