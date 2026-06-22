@@ -25,7 +25,7 @@ const AdminLoginPage = () => {
       const { token } = await loginAdmin(email.trim(), password);
       localStorage.setItem(ADMIN_TOKEN_KEY, token);
       navigate(from, { replace: true });
-    } catch (err) {
+    } catch {
       setError("Invalid admin credentials. Please try again.");
     }
   };

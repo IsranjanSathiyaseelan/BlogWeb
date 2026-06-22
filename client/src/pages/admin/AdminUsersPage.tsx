@@ -13,7 +13,7 @@ const AdminUsersPage = () => {
       try {
         const response = await fetchAdminUsers();
         setUsers(response.users);
-      } catch (err) {
+      } catch {
         setError("Unable to load users.");
       } finally {
         setLoading(false);

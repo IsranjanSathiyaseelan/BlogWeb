@@ -1,7 +1,8 @@
 import axios from "axios";
 import { ENDPOINTS } from "./endpoints";
+import type { AdminStats } from "../types/dashboard";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL ?? "/api";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 const ADMIN_TOKEN_KEY = "blogweb_admin_token";
 
 const adminApi = axios.create({
@@ -26,10 +27,7 @@ export const loginAdmin = async (email: string, password: string) => {
 
 export const fetchAdminMetrics = async () => {
   const response = await adminApi.get(ENDPOINTS.admin.metrics);
-  return response.data as {
-    totalUsers: number;
-    totalBlogs: number;
-  };
+  return response.data as AdminStats;
 };
 
 export type AdminUser = {

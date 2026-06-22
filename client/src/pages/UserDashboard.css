@@ -1,0 +1,62 @@
+.dashboard-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.dashboard-card {
+  border: 1px solid #d2e0f4;
+  border-radius: 18px;
+  background: #ffffff;
+  padding: 1.25rem 1.5rem;
+}
+
+.dashboard-card__label {
+  margin: 0 0 0.5rem;
+  color: #5a6e8b;
+  font-size: 0.95rem;
+}
+
+.dashboard-card__value {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #10225b;
+}
+
+.admin-table-wrapper {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #e7edf7;
+  text-align: left;
+}
+
+.admin-table th {
+  color: #0b1525;
+  font-weight: 700;
+}
+
+.admin-table-empty {
+  text-align: center;
+  color: #5a6e8b;
+  padding: 2rem 0;
+}
+
+.blog-manager__error {
+  color: #d0433e;
+  background: #ffe6e8;
+  border: 1px solid #f2c1c5;
+  padding: 1rem 1.2rem;
+  border-radius: 16px;
+  margin-bottom: 1rem;
+}

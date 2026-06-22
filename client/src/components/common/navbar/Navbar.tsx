@@ -22,7 +22,11 @@ const Navbar = () => {
   const { user, logout } = useAuth();
 
   const navItems: NavItem[] = user
-    ? [...baseNavItems, { label: "MyBlog", to: "/myblog" }]
+    ? [
+        ...baseNavItems,
+        { label: "Dashboard", to: "/dashboard" },
+        { label: "MyBlog", to: "/myblog" },
+      ]
     : baseNavItems;
 
   useEffect(() => {
