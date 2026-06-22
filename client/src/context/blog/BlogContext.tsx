@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { BLOG_POSTS, BlogContext } from "./blogStore";
+import { BlogContext } from "./blogStore";
 import type {
   BlogContextValue,
   BlogPost,
@@ -8,21 +8,19 @@ import type {
 } from "../../types/blog";
 import * as postsApi from "../../api/posts";
 
-// eslint-disable-next-line react-refresh/only-export-components
 export { useBlog } from "./blogStore";
 
 export const BlogProvider = ({ children }: { children: ReactNode }) => {
-  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
         const backendPosts = await postsApi.getPosts();
-        if (backendPosts.length > 0) {
-          setPosts(backendPosts);
-        }
+        setPosts(backendPosts);
       } catch (error) {
         console.error("Unable to load blog posts from backend:", error);
+        setPosts([]);
       }
     };
 
