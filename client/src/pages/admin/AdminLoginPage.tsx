@@ -7,7 +7,7 @@ import "./AdminLoginPage.css";
 const ADMIN_TOKEN_KEY = "blogweb_admin_token";
 
 const AdminLoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const AdminLoginPage = () => {
     setError("");
 
     try {
-      const { token } = await loginAdmin(username.trim(), password);
+      const { token } = await loginAdmin(email, password);
       localStorage.setItem(ADMIN_TOKEN_KEY, token);
       navigate(from, { replace: true });
     } catch (err) {
@@ -39,14 +39,14 @@ const AdminLoginPage = () => {
         </p>
 
         <form className="admin-login-form" onSubmit={handleSubmit}>
-          <label className="admin-login-form__label" htmlFor="admin-username">
-            Username
+          <label className="admin-login-form__label" htmlFor="admin-email">
+            email
           </label>
           <input
-            id="admin-username"
+            id="admin-email"
             className="admin-login-form__input"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             placeholder="admin"
             autoComplete="username"
             required
