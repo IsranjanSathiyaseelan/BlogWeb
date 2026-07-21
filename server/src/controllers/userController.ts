@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { pool } from "../config/db";
+import { prisma } from "../config/prisma";
 import { JWT_SECRET } from "../config/env";
 
 // ----------------------
@@ -38,7 +38,6 @@ const verifyPassword = async (
 
   const expected = Buffer.from(keyHex, "hex");
 
-  // lengths must match for timingSafeEqual
   if (derived.length !== expected.length) return false;
 
   return crypto.timingSafeEqual(derived, expected);
@@ -54,18 +53,20 @@ const createJwt = (payload: object): string => {
   });
 };
 
-const sanitizeUser = (row: any) => ({
-  id: Number(row.id),
-  name: row.name,
-  email: row.email,
-  createdAt:
-    typeof row.created_at === "string"
-      ? row.created_at
-      : row.created_at?.toISOString() || null,
-  updatedAt:
-    typeof row.updated_at === "string"
-      ? row.updated_at
-      : row.updated_at?.toISOString() || null,
+const sanitizeUser = (user: {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+}) => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  createdAt: user.createdAt.toISOString(),
+  updatedAt: user.updatedAt.toISOString(),
 });
 
 // ----------------------
@@ -91,30 +92,28 @@ export const signupUser = async (req: Request, res: Response) => {
         .json({ error: "Password must be at least 6 characters" });
     }
 
-    const existing = await pool.query(
-      `SELECT id FROM users WHERE email = $1 LIMIT 1`,
-      [email]
-    );
+    const existing = await prisma.user.findUnique({ where: { email } });
 
-    if ((existing.rowCount ?? 0) > 0) {
+    if (existing) {
       return res.status(409).json({ error: "Email already in use" });
     }
 
     const passwordHash = await hashPassword(password);
 
-    const result = await pool.query(
-      `INSERT INTO users (name, email, password_hash)
-       VALUES ($1, $2, $3)
-       RETURNING *`,
-      [name, email, passwordHash]
-    );
+    const user = await prisma.user.create({
+      data: { name, email, passwordHash },
+    });
 
-    const user = sanitizeUser(result.rows[0]);
-    const token = createJwt({ id: user.id, email: user.email });
+    const sanitized = sanitizeUser(user);
+    const token = createJwt({
+      id: sanitized.id,
+      role: sanitized.role,
+      email: sanitized.email,
+    });
 
     return res.status(201).json({
       token,
-      user,
+      user: sanitized,
     });
   } catch (error) {
     console.error("Error signing up user:", error);
@@ -135,31 +134,28 @@ export const loginUser = async (req: Request, res: Response) => {
         .json({ error: "Email and password are required" });
     }
 
-    const result = await pool.query(
-      `SELECT * FROM users WHERE email = $1 LIMIT 1`,
-      [email]
-    );
+    const user = await prisma.user.findUnique({ where: { email } });
 
-    if (result.rowCount === 0) {
+    if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const user = result.rows[0];
-
-    const isValid = await verifyPassword(
-      password,
-      user.password_hash
-    );
+    const isValid = await verifyPassword(password, user.passwordHash);
 
     if (!isValid) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const token = createJwt({ id: user.id, email: user.email });
+    const sanitized = sanitizeUser(user);
+    const token = createJwt({
+      id: sanitized.id,
+      role: sanitized.role,
+      email: sanitized.email,
+    });
 
     return res.status(200).json({
       token,
-      user: sanitizeUser(user),
+      user: sanitized,
     });
   } catch (error) {
     console.error("Error logging in user:", error);
@@ -172,23 +168,20 @@ export const loginUser = async (req: Request, res: Response) => {
 // ----------------------
 export const getCurrentUser = async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user;
+    const reqUser = (req as any).user;
 
-    if (!user) {
+    if (!reqUser) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const result = await pool.query(
-      `SELECT * FROM users WHERE id = $1 LIMIT 1`,
-      [user.id]
-    );
+    const user = await prisma.user.findUnique({ where: { id: reqUser.id } });
 
-    if (result.rowCount === 0) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
     return res.status(200).json({
-      user: sanitizeUser(result.rows[0]),
+      user: sanitizeUser(user),
     });
   } catch (error) {
     console.error("Error fetching current user:", error);

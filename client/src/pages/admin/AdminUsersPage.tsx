@@ -13,7 +13,7 @@ const AdminUsersPage = () => {
       try {
         const response = await fetchAdminUsers();
         setUsers(response.users);
-      } catch {
+      } catch (err) {
         setError("Unable to load users.");
       } finally {
         setLoading(false);
@@ -49,7 +49,7 @@ const AdminUsersPage = () => {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Blogs</th>
+              <th>Role</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -71,7 +71,7 @@ const AdminUsersPage = () => {
                 <tr key={user.id}>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
-                  <td>{user.blogCount}</td>
+                  <td>{user.role}</td>
                   <td>
                     <button
                       type="button"

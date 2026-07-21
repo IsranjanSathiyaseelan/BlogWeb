@@ -22,12 +22,10 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/admin/login" element={<AdminLoginPage />} />
+      
       <Route element={<AdminGuard />}>
         <Route element={<AdminLayout />}>
-          <Route
-            path="/admin"
-            element={<Navigate to="/admin/dashboard" replace />}
-          />
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
         </Route>

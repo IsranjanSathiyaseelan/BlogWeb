@@ -1,6 +1,5 @@
 import axios from "axios";
 import { ENDPOINTS } from "./endpoints";
-import type { AdminStats } from "../types/dashboard";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 const ADMIN_TOKEN_KEY = "blogweb_admin_token";
@@ -20,28 +19,27 @@ adminApi.interceptors.request.use((config) => {
   return config;
 });
 
-export const loginAdmin = async (email: string, password: string) => {
-  const response = await adminApi.post(ENDPOINTS.admin.login, { email, password });
+export const loginAdmin = async (username: string, password: string) => {
+  const response = await adminApi.post(ENDPOINTS.admin.login, { username, password });
   return response.data as { token: string };
 };
 
 export const fetchAdminMetrics = async () => {
   const response = await adminApi.get(ENDPOINTS.admin.metrics);
-  return response.data as AdminStats;
+  return response.data as {
+    totalUsers: number;
+    revenue: number | null;
+    activeSessions: number | null;
+  };
 };
 
 export type AdminUser = {
   id: number;
   name: string;
   email: string;
+  role: string;
   created_at: string;
   updated_at: string;
-  blogCount: number;
-};
-
-export const verifyAdminToken = async () => {
-  const response = await adminApi.get(ENDPOINTS.admin.verify);
-  return response.data as { valid: true; user: { isAdmin?: boolean; email?: string } };
 };
 
 export const fetchAdminUsers = async () => {
