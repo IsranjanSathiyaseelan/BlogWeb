@@ -19,8 +19,14 @@ adminApi.interceptors.request.use((config) => {
   return config;
 });
 
-export const loginAdmin = async (username: string, password: string) => {
-  const response = await adminApi.post(ENDPOINTS.admin.login, { username, password });
+export const verifyAdminToken = async () => {
+  const { data } = await adminApi.get(ENDPOINTS.admin.verify);
+  return data;
+};
+
+
+export const loginAdmin = async (email: string, password: string) => {
+  const response = await adminApi.post(ENDPOINTS.admin.login, { email, password });
   return response.data as { token: string };
 };
 
