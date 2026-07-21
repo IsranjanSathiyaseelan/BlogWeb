@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const TOKEN_STORAGE_KEY = "blogweb_token";
+
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const api = axios.create({
@@ -10,7 +12,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("blogweb_token");
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
 
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;

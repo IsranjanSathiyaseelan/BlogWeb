@@ -1,18 +1,5 @@
 ﻿import { Request, Response } from "express";
-import { initializeDb, pool } from "../config/db";
-
-const runBlogQuery = async (queryText: string, values: unknown[] = []) => {
-  try {
-    return await pool.query(queryText, values);
-  } catch (error: any) {
-    if (error?.code === "42P01") {
-      await initializeDb();
-      return pool.query(queryText, values);
-    }
-
-    throw error;
-  }
-};
+import { prisma } from "../config/prisma";
 
 // ----------------------
 // Slug helpers
@@ -30,13 +17,8 @@ const generateUniqueSlug = async (title: string) => {
   let counter = 1;
 
   while (true) {
-    const existing = await runBlogQuery(
-      `SELECT id FROM blog_posts WHERE slug = $1 LIMIT 1`,
-      [slug]
-    );
-
-    if (existing.rowCount === 0) break;
-
+    const existing = await prisma.blogPost.findUnique({ where: { slug } });
+    if (!existing) break;
     slug = `${baseSlug}-${counter++}`;
   }
 
@@ -46,19 +28,35 @@ const generateUniqueSlug = async (title: string) => {
 // ----------------------
 // Format response
 // ----------------------
-const formatPost = (row: any) => ({
-  id: row.id,
-  slug: row.slug,
-  title: row.title,
-  excerpt: row.excerpt,
-  content: row.content,
-  author: row.author_name ?? `Author ${row.author_id}`,
-  authorId: row.author_id,
-  publishedAt: row.published_at?.toISOString().split("T")[0] || "",
-  readMinutes: row.read_minutes,
-  category: row.category,
-  featured: row.featured,
+type PostWithAuthor = {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  authorId: number;
+  author: { name: string } | null;
+  publishedAt: Date;
+  readMinutes: number;
+  category: string;
+  featured: boolean;
+};
+
+const formatPost = (post: PostWithAuthor) => ({
+  id: post.id,
+  slug: post.slug,
+  title: post.title,
+  excerpt: post.excerpt,
+  content: post.content,
+  author: post.author?.name ?? `Author ${post.authorId}`,
+  authorId: post.authorId,
+  publishedAt: post.publishedAt.toISOString().split("T")[0],
+  readMinutes: post.readMinutes,
+  category: post.category,
+  featured: post.featured,
 });
+
+const postWithAuthorInclude = { author: { select: { name: true } } };
 
 // ----------------------
 // Get all posts
@@ -68,15 +66,14 @@ export const getAllPosts = async (req: Request, res: Response) => {
     const limit = Number(req.query.limit) || 10;
     const offset = Number(req.query.offset) || 0;
 
-    const result = await runBlogQuery(
-      `SELECT bp.*, u.name AS author_name
-       FROM blog_posts bp
-       LEFT JOIN users u ON u.id = bp.author_id
-       ORDER BY bp.published_at DESC LIMIT $1 OFFSET $2`,
-      [limit, offset]
-    );
+    const posts = await prisma.blogPost.findMany({
+      include: postWithAuthorInclude,
+      orderBy: { publishedAt: "desc" },
+      take: limit,
+      skip: offset,
+    });
 
-    res.json(result.rows.map(formatPost));
+    res.json(posts.map(formatPost));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Unable to fetch posts" });
@@ -84,26 +81,23 @@ export const getAllPosts = async (req: Request, res: Response) => {
 };
 
 // ----------------------
-// Get current user posts
+// Get current user's posts
 // ----------------------
 export const getUserPosts = async (req: Request, res: Response) => {
   try {
     const user = req.user;
 
-    if (!user?.id) {
+    if (!user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const result = await runBlogQuery(
-      `SELECT bp.*, u.name AS author_name
-       FROM blog_posts bp
-       LEFT JOIN users u ON u.id = bp.author_id
-       WHERE bp.author_id = $1
-       ORDER BY bp.published_at DESC`,
-      [user.id]
-    );
+    const posts = await prisma.blogPost.findMany({
+      where: { authorId: Number(user.id) },
+      include: postWithAuthorInclude,
+      orderBy: { publishedAt: "desc" },
+    });
 
-    res.json(result.rows.map(formatPost));
+    res.json(posts.map(formatPost));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Unable to fetch your posts" });
@@ -115,21 +109,18 @@ export const getUserPosts = async (req: Request, res: Response) => {
 // ----------------------
 export const getPostBySlug = async (req: Request, res: Response) => {
   try {
-    const { slug } = req.params;
+    const slug = String(req.params.slug);
 
-    const result = await runBlogQuery(
-      `SELECT bp.*, u.name AS author_name
-       FROM blog_posts bp
-       LEFT JOIN users u ON u.id = bp.author_id
-       WHERE bp.slug = $1 LIMIT 1`,
-      [slug]
-    );
+    const post = await prisma.blogPost.findUnique({
+      where: { slug },
+      include: postWithAuthorInclude,
+    });
 
-    if (result.rowCount === 0) {
+    if (!post) {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    res.json(formatPost(result.rows[0]));
+    res.json(formatPost(post));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Unable to fetch post" });
@@ -152,16 +143,25 @@ export const createPost = async (req: Request, res: Response) => {
     if (!title || !excerpt || !content || typeof readMinutes !== "number" || !category) {
       return res.status(400).json({ error: "Invalid fields" });
     }
+
     const slug = await generateUniqueSlug(title);
 
-    const result = await runBlogQuery(
-      `INSERT INTO blog_posts (slug, title, excerpt, content, image_url, author_id, read_minutes, category, featured)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING *, (SELECT name FROM users WHERE id = $6) AS author_name`,
-      [slug, title, excerpt, content, "", user.id, readMinutes, category, featured]
-    );
+    const post = await prisma.blogPost.create({
+      data: {
+        slug,
+        title,
+        excerpt,
+        content,
+        imageUrl: "",
+        authorId: Number(user.id),
+        readMinutes,
+        category,
+        featured,
+      },
+      include: postWithAuthorInclude,
+    });
 
-    res.status(201).json(formatPost(result.rows[0]));
+    res.status(201).json(formatPost(post));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Unable to create post" });
@@ -180,51 +180,36 @@ export const updatePost = async (req: Request, res: Response) => {
     if (Number.isNaN(id))
       return res.status(400).json({ error: "Invalid id" });
 
-    const existingPost = await runBlogQuery(
-      `SELECT * FROM blog_posts WHERE id = $1 LIMIT 1`,
-      [id]
-    );
+    const existingPost = await prisma.blogPost.findUnique({ where: { id } });
 
-    if (existingPost.rowCount === 0) {
+    if (!existingPost) {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    const post = existingPost.rows[0];
-
-    if (post.author_id !== user.id && !user.isAdmin) {
+    if (existingPost.authorId !== Number(user.id) && user.role !== "ADMIN") {
       return res.status(403).json({ error: "Forbidden" });
     }
 
     const updates = req.body;
     const slug = updates.title
       ? await generateUniqueSlug(updates.title)
-      : post.slug;
+      : undefined;
 
-    const result = await runBlogQuery(
-      `UPDATE blog_posts SET
-         title = COALESCE($1, title),
-         slug = COALESCE($2, slug),
-         excerpt = COALESCE($3, excerpt),
-         content = COALESCE($4, content),
-        read_minutes = COALESCE($5, read_minutes),
-        category = COALESCE($6, category),
-        featured = COALESCE($7, featured),
-         updated_at = NOW()
-       WHERE id = $8
-       RETURNING *, (SELECT name FROM users WHERE id = author_id) AS author_name`,
-      [
-        updates.title,
+    const post = await prisma.blogPost.update({
+      where: { id },
+      data: {
+        title: updates.title ?? undefined,
         slug,
-        updates.excerpt,
-        updates.content,
-        updates.readMinutes,
-        updates.category,
-        updates.featured,
-        id,
-      ]
-    );
+        excerpt: updates.excerpt ?? undefined,
+        content: updates.content ?? undefined,
+        readMinutes: updates.readMinutes ?? undefined,
+        category: updates.category ?? undefined,
+        featured: updates.featured ?? undefined,
+      },
+      include: postWithAuthorInclude,
+    });
 
-    res.json(formatPost(result.rows[0]));
+    res.json(formatPost(post));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Unable to update post" });
@@ -243,22 +228,17 @@ export const deletePost = async (req: Request, res: Response) => {
     if (Number.isNaN(id))
       return res.status(400).json({ error: "Invalid id" });
 
-    const existingPost = await runBlogQuery(
-      `SELECT * FROM blog_posts WHERE id = $1 LIMIT 1`,
-      [id]
-    );
+    const existingPost = await prisma.blogPost.findUnique({ where: { id } });
 
-    if (existingPost.rowCount === 0) {
+    if (!existingPost) {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    const post = existingPost.rows[0];
-
-    if (!user.isAdmin && post.author_id !== user.id) {
+    if (user.role !== "ADMIN" && existingPost.authorId !== Number(user.id)) {
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    await runBlogQuery(`DELETE FROM blog_posts WHERE id = $1`, [id]);
+    await prisma.blogPost.delete({ where: { id } });
 
     res.status(204).send();
   } catch (error) {

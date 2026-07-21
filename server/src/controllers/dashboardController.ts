@@ -1,59 +1,59 @@
 import { Request, Response } from "express";
-import { pool } from "../config/db";
+import { prisma } from "../config/prisma";
 
-const sanitizeUser = (row: any) => ({
-  id: String(row.id),
-  name: row.name,
-  email: row.email,
-  createdAt:
-    typeof row.created_at === "string"
-      ? new Date(row.created_at)
-      : row.created_at?.toISOString
-      ? new Date(row.created_at)
-      : new Date(),
+const sanitizeUser = (user: { id: number; name: string; email: string; createdAt: Date }) => ({
+  id: String(user.id),
+  name: user.name,
+  email: user.email,
+  createdAt: user.createdAt,
 });
 
-const formatBlog = (row: any) => ({
-  id: String(row.id),
-  title: row.title,
-  content: row.content,
-  userId: String(row.author_id),
-  createdAt:
-    typeof row.created_at === "string"
-      ? new Date(row.created_at)
-      : row.created_at?.toISOString
-      ? new Date(row.created_at)
-      : new Date(),
+const formatBlog = (post: {
+  id: number;
+  title: string;
+  content: string;
+  authorId: number;
+  publishedAt: Date;
+}) => ({
+  id: String(post.id),
+  title: post.title,
+  content: post.content,
+  userId: String(post.authorId),
+  createdAt: post.publishedAt,
 });
 
 export const getUserDashboard = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
+    const reqUser = req.user;
 
-    if (!user?.id) {
+    if (!reqUser?.id) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const userResult = await pool.query(
-      `SELECT id, name, email, created_at FROM users WHERE id = $1 LIMIT 1`,
-      [user.id]
-    );
+    const user = await prisma.user.findUnique({
+      where: { id: Number(reqUser.id) },
+      select: { id: true, name: true, email: true, createdAt: true },
+    });
 
-    if (userResult.rowCount === 0) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const blogResult = await pool.query(
-      `SELECT id, title, content, author_id, created_at
-       FROM blog_posts
-       WHERE author_id = $1
-       ORDER BY created_at DESC`,
-      [user.id]
-    );
+    const posts = await prisma.blogPost.findMany({
+      where: { authorId: Number(reqUser.id) },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        authorId: true,
+        publishedAt: true,
+      },
+      orderBy: { publishedAt: "desc" },
+    });
 
     return res.status(200).json({
-      user: sanitizeUser(userResult.rows[0]),
-      blogs: blogResult.rows.map(formatBlog),
+      user: sanitizeUser(user),
+      blogs: posts.map(formatBlog),
     });
   } catch (error) {
     console.error("Error fetching user dashboard:", error);

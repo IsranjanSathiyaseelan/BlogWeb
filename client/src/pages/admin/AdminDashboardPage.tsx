@@ -1,26 +1,21 @@
 import { useEffect, useState } from "react";
 import { fetchAdminMetrics } from "../../api/admin";
-import { getPosts } from "../../api/posts";
-import type { AdminStats } from "../../types/dashboard";
-import type { BlogPost } from "../../types/blog";
 import "./AdminDashboardPage.css";
 
 const AdminDashboardPage = () => {
-  const [metrics, setMetrics] = useState<AdminStats | null>(null);
-  const [recentBlogs, setRecentBlogs] = useState<BlogPost[]>([]);
+  const [metrics, setMetrics] = useState<{
+    totalUsers: number;
+    revenue: number | null;
+    activeSessions: number | null;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const loadDashboard = async () => {
+    const loadMetrics = async () => {
       try {
-        const [metricsData, posts] = await Promise.all([
-          fetchAdminMetrics(),
-          getPosts(),
-        ]);
-
-        setMetrics(metricsData);
-        setRecentBlogs(posts.slice(0, 5));
+        const data = await fetchAdminMetrics();
+        setMetrics(data);
       } catch {
         setError("Unable to load dashboard metrics.");
       } finally {
@@ -28,7 +23,7 @@ const AdminDashboardPage = () => {
       }
     };
 
-    loadDashboard();
+    loadMetrics();
   }, []);
 
   return (
@@ -41,18 +36,28 @@ const AdminDashboardPage = () => {
           </p>
         </div>
         <div className="admin-metric-card">
-          <p className="admin-metric-card__label">Total Blogs</p>
+          <p className="admin-metric-card__label">Revenue</p>
           <p className="admin-metric-card__value">
-            {loading ? "Loading…" : (metrics?.totalBlogs ?? "—")}
+            {loading
+              ? "Loading…"
+              : metrics?.revenue != null
+                ? `$${metrics.revenue}`
+                : "—"}
+          </p>
+        </div>
+        <div className="admin-metric-card">
+          <p className="admin-metric-card__label">Active Sessions</p>
+          <p className="admin-metric-card__value">
+            {loading ? "Loading…" : (metrics?.activeSessions ?? "—")}
           </p>
         </div>
       </section>
 
       <section className="admin-table-section">
         <div className="admin-table-header">
-          <h2 className="admin-table-title">Recent Blog Posts</h2>
+          <h2 className="admin-table-title">User Management</h2>
           <p className="admin-table-subtitle">
-            Review the latest blog posts published on the platform.
+            Review your live user data once it is available.
           </p>
         </div>
 
@@ -63,29 +68,18 @@ const AdminDashboardPage = () => {
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Author</th>
-                  <th>Category</th>
-                  <th>Published</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {recentBlogs.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="admin-table-empty">
-                      No recent posts available.
-                    </td>
-                  </tr>
-                ) : (
-                  recentBlogs.map((post) => (
-                    <tr key={post.id}>
-                      <td>{post.title}</td>
-                      <td>{post.author}</td>
-                      <td>{post.category}</td>
-                      <td>{new Date(post.publishedAt).toLocaleDateString()}</td>
-                    </tr>
-                  ))
-                )}
+                <tr>
+                  <td colSpan={4} className="admin-table-empty">
+                    User data is available on the User Management page.
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
