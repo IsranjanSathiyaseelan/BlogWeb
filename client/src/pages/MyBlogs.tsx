@@ -8,7 +8,7 @@ import type { BlogFormState, BlogPost } from "../types/blog";
 import "./pages.css";
 import "./MyBlogs.css";
 
-const initialForm = {
+const initialForm: BlogFormState = {
   title: "",
   excerpt: "",
   category: "Product",
@@ -51,9 +51,14 @@ const MyBlogs = () => {
   if (loading || loadingPosts) {
     return (
       <div className="page myblogs">
-        <section className="content-panel">
-          <p>Loading your dashboard…</p>
-        </section>
+        <div className="myblogs-skeleton">
+          <div className="skeleton-box skeleton-box--form" />
+          <div className="skeleton-grid">
+            <div className="skeleton-box skeleton-box--card" />
+            <div className="skeleton-box skeleton-box--card" />
+            <div className="skeleton-box skeleton-box--card" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -65,16 +70,17 @@ const MyBlogs = () => {
   const resetForm = () => {
     setEditingId(null);
     setForm(initialForm);
+    setError("");
   };
 
   const addOrUpdateLocalPosts = (updatedPost: BlogPost) => {
     setUserPosts((current) => {
       const existingIndex = current.findIndex(
-        (item) => item.id === updatedPost.id,
+        (item) => item.id === updatedPost.id
       );
       if (existingIndex >= 0) {
         return current.map((item) =>
-          item.id === updatedPost.id ? updatedPost : item,
+          item.id === updatedPost.id ? updatedPost : item
         );
       }
 
@@ -125,8 +131,12 @@ const MyBlogs = () => {
       excerpt: post.excerpt,
       category: post.category,
       readMinutes: String(post.readMinutes),
-      content: post.content.join("\n"),
+      content: post.content.join("\n\n"),
     });
+
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   const handleDelete = async (id: number) => {
@@ -146,104 +156,191 @@ const MyBlogs = () => {
 
   return (
     <div className="page myblogs">
-      <section ref={formRef} className="content-panel blog-manager">
-        <div className="blog-manager__form">
-          <div className="blog-manager__header">
-            <h2>{editingId ? "Edit blog post" : "Create a new blog"}</h2>
+      {/* Top Header */}
+      <div className="myblogs__header">
+        <div>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="myblogs-back-btn"
+          >
+            ← Back to Dashboard
+          </button>
+          <h1>Content Studio</h1>
+          <p className="myblogs__sub">
+            Craft, refine, and publish articles for your audience.
+          </p>
+        </div>
+      </div>
 
-            {editingId && (
-              <Button type="button" variant="outline" onClick={resetForm}>
-                Cancel
+      {/* Form Editor (Frameless outer wrapper) */}
+      <div ref={formRef} className="blog-manager-container">
+        <form onSubmit={handleSubmit} className="blog-manager__form">
+          <div className="blog-manager__header">
+            <div className="blog-manager__title-group">
+              <span
+                className={`blog-manager__badge ${
+                  editingId ? "blog-manager__badge--editing" : ""
+                }`}
+              >
+                {editingId ? "Editing Mode" : "New Post"}
+              </span>
+              <h2>{editingId ? "Update Article" : "Write a New Article"}</h2>
+            </div>
+
+            <div className="blog-manager__header-actions">
+              {editingId && (
+                <Button type="button" variant="outline" onClick={resetForm}>
+                  Discard Changes
+                </Button>
+              )}
+              <Button type="submit" variant="primary">
+                {editingId ? "Save Changes" : "Publish Article"}
               </Button>
-            )}
-            {error && <div className="blog-manager__error">{error}</div>}
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="blog-manager__fields">
-            <label className="blog-manager__field">
-              Title
+          {error && (
+            <div className="blog-manager__error">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+
+          <div className="blog-manager__fields">
+            {/* Title Input */}
+            <div className="blog-manager__field blog-manager__field--hero">
               <input
+                className="input-title"
+                placeholder="Article Title..."
                 value={form.title}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, title: e.target.value }))
                 }
                 required
               />
-            </label>
+            </div>
 
-            <label className="blog-manager__field">
-              Excerpt
+            {/* Metadata Bar (Category & Read Time) */}
+            <div className="blog-manager__meta-bar">
+              <div className="blog-manager__field">
+                <label htmlFor="category-select">Category</label>
+                <div className="input-with-icon">
+                  <span className="input-icon">🏷️</span>
+                  <input
+                    id="category-select"
+                    placeholder="e.g. Engineering, Design"
+                    value={form.category}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, category: e.target.value }))
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="blog-manager__field">
+                <label htmlFor="read-time-input">Read Time (minutes)</label>
+                <div className="input-with-icon">
+                  <span className="input-icon">⏱️</span>
+                  <input
+                    id="read-time-input"
+                    type="number"
+                    min={1}
+                    value={form.readMinutes}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        readMinutes: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Excerpt Input */}
+            <div className="blog-manager__field">
+              <div className="field-label-row">
+                <label htmlFor="excerpt-input">Summary Excerpt</label>
+                <span className="field-hint">
+                  {form.excerpt.length}/160 chars
+                </span>
+              </div>
               <textarea
-                rows={3}
+                id="excerpt-input"
+                rows={2}
+                maxLength={200}
+                placeholder="Write a brief preview summary that will show on post cards..."
                 value={form.excerpt}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, excerpt: e.target.value }))
                 }
                 required
               />
-            </label>
+            </div>
 
-            <label className="blog-manager__field">
-              Category
-              <input
-                value={form.category}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, category: e.target.value }))
-                }
-              />
-            </label>
-
-            <label className="blog-manager__field">
-              Reading minutes
-              <input
-                type="number"
-                min={1}
-                value={form.readMinutes}
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    readMinutes: e.target.value,
-                  }))
-                }
-                required
-              />
-            </label>
-
-            <label className="blog-manager__field">
-              Content
+            {/* Main Content Body */}
+            <div className="blog-manager__field">
+              <div className="field-label-row">
+                <label htmlFor="content-input">Article Body</label>
+                <span className="field-hint">Supports line breaks</span>
+              </div>
               <textarea
-                rows={6}
+                id="content-input"
+                className="input-content"
+                rows={12}
+                placeholder="Start writing your article body here..."
                 value={form.content}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, content: e.target.value }))
                 }
                 required
               />
-            </label>
+            </div>
+          </div>
+        </form>
+      </div>
 
-            <Button type="submit" variant="primary">
-              {editingId ? "Update Post" : "Create Post"}
-            </Button>
-          </form>
-        </div>
-      </section>
-
-      {/* Blog List */}
+      {/* Published Posts Grid */}
       <section className="content-panel">
-        <div className="section-head">
-          <h2>Your blog posts</h2>
+        <div className="section-head section-head--between">
+          <div>
+            <h2>Your published posts</h2>
+            <p>Manage and track articles you've authored.</p>
+          </div>
+          {userPosts.length > 0 && (
+            <span className="myblogs-count-pill">{userPosts.length} Posts</span>
+          )}
         </div>
 
         {userPosts.length === 0 ? (
           <div className="myblogs__empty">
-            <p>No posts yet. Start creating your first blog 🚀</p>
+            <div className="myblogs__empty-icon">✍️</div>
+            <h3>No articles published yet</h3>
+            <p>Use the editor above to craft your first post!</p>
           </div>
         ) : (
           <div className="blog-manager__list">
             {userPosts.map((post: BlogPost) => (
               <article key={post.id} className="blog-card">
-                <div>
-                  <p className="blog-card__meta">{post.category}</p>
+                <div className="blog-card__content">
+                  <div className="blog-card__top">
+                    <span className="blog-card__meta">{post.category}</span>
+                    <span className="blog-card__readtime">
+                      ⏱ {post.readMinutes} min read
+                    </span>
+                  </div>
                   <h3>{post.title}</h3>
                   <p>{post.excerpt}</p>
                 </div>
