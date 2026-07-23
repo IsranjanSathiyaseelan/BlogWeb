@@ -15,110 +15,58 @@ const featureCards: Array<{
 }> = [
   {
     icon: "spark",
-    title: "Editorial clarity",
+    title: "Editorial Clarity",
     description:
-      "Thoughtful layouts and crisp typography keep the experience calm, premium, and easy to scan.",
+      "Thoughtful typography and wide breathing room keep the reading experience calm and premium.",
   },
   {
     icon: "search",
-    title: "Fast discovery",
+    title: "Fast Discovery",
     description:
-      "Search and filters are built into the page flow so readers can find the right story without friction.",
+      "Contextual search and structured categories help readers pinpoint insights without friction.",
   },
   {
     icon: "device",
-    title: "Responsive by default",
+    title: "Responsive Flow",
     description:
-      "Every section collapses naturally on mobile with breathing room, readable type, and touch-friendly actions.",
+      "Fluid layouts and touch-first elements scale effortlessly across phones, tablets, and desktops.",
   },
   {
     icon: "layers",
-    title: "Reusable system",
+    title: "Modular Design System",
     description:
-      "Cards, panels, buttons, and spacing scale consistently across the homepage and the rest of the app.",
+      "Cohesive tokens for spacing, cards, and buttons ensure visually unified UI across all pages.",
   },
 ];
 
-const renderFeatureIcon = (icon: FeatureIconName) => {
-  switch (icon) {
+const FeatureIcon = ({ name }: { name: FeatureIconName }) => {
+  switch (name) {
     case "spark":
       return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M12 2l1.7 5.3L19 9l-5.3 1.7L12 16l-1.7-5.3L5 9l5.3-1.7L12 2Z"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z" />
         </svg>
       );
     case "layers":
       return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="m12 4 7 4-7 4-7-4 7-4Z"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="m5 12 7 4 7-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="m5 16 7 4 7-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polygon points="12 2 2 7 12 12 22 7 12 2" />
+          <polyline points="2 17 12 22 22 17" />
+          <polyline points="2 12 12 17 22 12" />
         </svg>
       );
     case "search":
       return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle
-            cx="11"
-            cy="11"
-            r="6.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <path
-            d="M16 16l4.5 4.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m21 21-4.35-4.35" />
         </svg>
       );
     case "device":
       return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect
-            x="4"
-            y="4"
-            width="16"
-            height="16"
-            rx="3"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <path
-            d="M8 16h8"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect width="14" height="20" x="5" y="2" rx="3" />
+          <path d="M12 18h.01" />
         </svg>
       );
   }
@@ -135,9 +83,13 @@ const HomePage = () => {
 
   return (
     <div className="page home-page">
+      {/* HERO SECTION */}
       <section className="home-hero content-panel">
         <div className="home-hero__copy">
-          <p className="home-hero__eyebrow">Premium ideas for modern builders</p>
+          <div className="home-hero__badge">
+            <span className="home-hero__badge-dot" />
+            <span>Editorial Platform</span>
+          </div>
           <h1>Build a sharper product mind with every scroll.</h1>
           <p className="home-hero__subtitle">
             BlogWeb is a polished home for practical insights, modern design
@@ -150,76 +102,72 @@ const HomePage = () => {
               variant="primary"
               onClick={() => navigate("/all-blogs")}
             >
-              View All Blogs
+              Explore All Stories
             </Button>
             <Button
               type="button"
               variant="secondary"
               onClick={() => navigate("/about")}
             >
-              Learn our story →
+              Our Story &rarr;
             </Button>
           </div>
 
           <div className="home-hero__stats" aria-label="Blog metrics">
             <article>
-              <span>Stories</span>
               <strong>{posts.length}</strong>
+              <span>Published Stories</span>
             </article>
             <article>
-              <span>Topics</span>
               <strong>{Math.max(categories.length - 1, 0)}</strong>
+              <span>Core Topics</span>
             </article>
             <article>
-              <span>Read time</span>
-              <strong>{totalReadMinutes} min</strong>
+              <strong>{totalReadMinutes}m</strong>
+              <span>Total Reading</span>
             </article>
           </div>
         </div>
 
+        {/* HERO GRAPHIC / MOCKUP */}
         <div className="home-hero__visual" aria-label="Editorial dashboard preview">
           <div className="home-dashboard">
             <div className="home-dashboard__chrome">
-              <span></span>
-              <span></span>
-              <span></span>
-              <strong>Editorial dashboard</strong>
+              <span className="dots"><i /><i /><i /></span>
+              <strong className="home-dashboard__tag">Featured Preview</strong>
             </div>
 
             <div className="home-dashboard__feature">
-              <p>Featured story</p>
+              <span className="home-dashboard__label">Spotlight</span>
               <h2>{featuredStory?.title ?? "Ship with clarity and confidence."}</h2>
-              <span>
-                {featuredStory?.category ?? "Product"} • {featuredStory?.readMinutes ?? 6} min read
-              </span>
+              <p className="home-dashboard__meta">
+                {featuredStory?.category ?? "Product"} &bull; {featuredStory?.readMinutes ?? 6} min read
+              </p>
             </div>
 
             <div className="home-dashboard__grid">
               <article>
-                <span>Weekly reads</span>
-                <strong>{Math.max(posts.length * 12, 48)}</strong>
+                <span>Weekly Readers</span>
+                <strong>{Math.max(posts.length * 12, 48)}k+</strong>
               </article>
               <article>
-                <span>Top category</span>
+                <span>Top Category</span>
                 <strong>{categories[1] ?? "Design"}</strong>
-              </article>
-              <article>
-                <span>Focus</span>
-                <strong>Clarity</strong>
               </article>
             </div>
 
             <div className="home-dashboard__stories">
-              {supportingStories.map((post: BlogPost) => (
-                <article key={post.id}>
-                  <span>{post.category}</span>
-                  <strong>{post.title}</strong>
-                </article>
-              ))}
-              {supportingStories.length === 0 && (
-                <article>
-                  <span>Reading list</span>
-                  <strong>New stories arrive every week.</strong>
+              {supportingStories.length > 0 ? (
+                supportingStories.map((post: BlogPost) => (
+                  <article key={post.id} className="home-dashboard__story-item">
+                    <span className="story-category">{post.category}</span>
+                    <strong className="story-title">{post.title}</strong>
+                  </article>
+                ))
+              ) : (
+                <article className="home-dashboard__story-item">
+                  <span className="story-category">Reading List</span>
+                  <strong className="story-title">New stories published every week.</strong>
                 </article>
               )}
             </div>
@@ -227,18 +175,19 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* VALUE PROPOSITION */}
       <section className="home-values">
         <div className="section-head home-values__head">
-          <div>
-            <p className="home-section-label">Value proposition</p>
-            <h2>Everything is designed to feel premium and effortless.</h2>
-          </div>
+          <p className="home-section-label">Design Standards</p>
+          <h2>Everything is crafted to feel premium and effortless.</h2>
         </div>
 
         <div className="home-values__grid">
           {featureCards.map((feature) => (
             <article key={feature.title} className="home-value-card content-panel">
-              <div className="home-value-card__icon">{renderFeatureIcon(feature.icon)}</div>
+              <div className="home-value-card__icon">
+                <FeatureIcon name={feature.icon} />
+              </div>
               <h3>{feature.title}</h3>
               <p>{feature.description}</p>
             </article>
@@ -246,35 +195,36 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* PROCESS / SPLIT SECTION */}
       <section className="home-split content-panel">
         <div className="home-split__copy">
-          <p className="home-section-label">How it flows</p>
-          <h2>Discovery feels deliberate, not crowded.</h2>
+          <p className="home-section-label">User Experience</p>
+          <h2>Discovery feels deliberate, not overwhelming.</h2>
           <p>
-            The homepage gives readers a strong first impression, then moves them
-            through thoughtful curation and content without visual friction.
+            Our home interface guides readers with intentional structure, letting
+            content stand out without intrusive banners or cognitive clutter.
           </p>
 
           <div className="home-split__steps">
             <article>
-              <span>01</span>
+              <span className="step-num">01</span>
               <div>
-                <strong>Scan the hero</strong>
-                <p>Understand what the publication offers in a single glance.</p>
+                <strong>Scan the Hero</strong>
+                <p>Grasp the platform’s core identity and value proposition in seconds.</p>
               </div>
             </article>
             <article>
-              <span>02</span>
+              <span className="step-num">02</span>
               <div>
-                <strong>Read the preview</strong>
-                <p>See the latest posts without needing a separate browsing page.</p>
+                <strong>Curated Insights</strong>
+                <p>Browse high-impact featured articles directly from the home feed.</p>
               </div>
             </article>
             <article>
-              <span>03</span>
+              <span className="step-num">03</span>
               <div>
-                <strong>Open the archive</strong>
-                <p>Jump to the dedicated blogs page when you want the full list.</p>
+                <strong>Full Archive</strong>
+                <p>Dive deep into categorized topic libraries whenever you're ready.</p>
               </div>
             </article>
           </div>
@@ -282,31 +232,31 @@ const HomePage = () => {
 
         <div className="home-split__visual" aria-hidden="true">
           <div className="home-split__graphic">
-            <div className="home-split__graphic-bar home-split__graphic-bar--lg"></div>
-            <div className="home-split__graphic-bar home-split__graphic-bar--md"></div>
-            <div className="home-split__graphic-bar home-split__graphic-bar--sm"></div>
+            <div className="home-split__graphic-bar home-split__graphic-bar--lg" />
+            <div className="home-split__graphic-bar home-split__graphic-bar--md" />
+            <div className="home-split__graphic-bar home-split__graphic-bar--sm" />
           </div>
           <div className="home-split__quote">
-            <strong>Built to read like a high-end product page.</strong>
+            <strong>"Crafted with editorial restraint."</strong>
             <p>
-              Spacing, contrast, and restraint keep the interface premium without
-              feeling heavy.
+              Generous whitespace, refined typography, and purposeful motion keep focus on key ideas.
             </p>
           </div>
         </div>
       </section>
 
+      {/* FEATURED POSTS */}
       <section className="home-featured content-panel">
         <div className="section-head home-featured__head">
           <div>
-            <p className="home-section-label">Featured posts</p>
-            <h2>Latest stories from the archive.</h2>
+            <p className="home-section-label">Curated Selection</p>
+            <h2>Latest stories from the archive</h2>
             <p className="result-count">
-              Showing {featuredPosts.length} spotlight posts
+              Displaying {featuredPosts.length} top-rated articles
             </p>
           </div>
           <Button type="button" variant="secondary" onClick={() => navigate("/all-blogs")}>
-            View All Blogs
+            View All Blogs &rarr;
           </Button>
         </div>
 

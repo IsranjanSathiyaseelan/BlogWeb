@@ -25,7 +25,12 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <Button
           variant="ghost"
@@ -33,9 +38,23 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
           onClick={onClose}
           aria-label="Close modal"
         >
-          ×
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M13 1L1 13M1 1L13 13"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </Button>
-        {children}
+        <div className="modal-body">{children}</div>
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ const BlogCard = ({
   return (
     <article className={cardClassName}>
       <Link to={link} className="blogcard__link" aria-label={`Read ${title}`}>
+        {/* Media / Cover Image */}
         <div className="blogcard__media">
           <img
             src={imageUrl}
@@ -31,19 +32,41 @@ const BlogCard = ({
             loading="lazy"
             decoding="async"
           />
+          <div className="blogcard__media-overlay" />
+          {category && <span className="blogcard__tag-floating">{category}</span>}
         </div>
 
+        {/* Card Body */}
         <div className="blogcard__content">
-          {category && <span className="blogcard__tag">{category}</span>}
-
-          <h3 className="blogcard__title">{title}</h3>
+          <div className="blogcard__header">
+            {category && <span className="blogcard__tag">{category}</span>}
+            <h3 className="blogcard__title">
+              <span>{title}</span>
+              <svg
+                className="blogcard__arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </h3>
+          </div>
 
           <p className="blogcard__description">{description}</p>
 
-          <div className="blogcard__meta" aria-label="Post metadata">
-            <time dateTime={publishedAt}>{formattedDate}</time>
-            <span aria-hidden="true">•</span>
-            <span>{readMinutes} min read</span>
+          {/* Footer Metadata */}
+          <div className="blogcard__footer">
+            <div className="blogcard__meta" aria-label="Post metadata">
+              <time dateTime={publishedAt}>{formattedDate}</time>
+              <span className="blogcard__dot" aria-hidden="true">•</span>
+              <span>{readMinutes} min read</span>
+            </div>
           </div>
         </div>
       </Link>
