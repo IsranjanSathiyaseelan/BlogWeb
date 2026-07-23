@@ -19,12 +19,13 @@ const initialForm: BlogFormState = {
 const MyBlogs = () => {
   const { user, loading } = useAuth();
   const { createPost, updatePost, deletePost } = useBlog();
+  const navigate = useNavigate();
+
   const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<BlogFormState>(initialForm);
-  const navigate = useNavigate();
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
