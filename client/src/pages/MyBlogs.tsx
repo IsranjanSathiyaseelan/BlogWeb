@@ -19,7 +19,7 @@ const initialForm: BlogFormState = {
 const MyBlogs = () => {
   const { user, loading } = useAuth();
   const { createPost, updatePost, deletePost } = useBlog();
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
