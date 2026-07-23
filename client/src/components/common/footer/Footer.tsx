@@ -1,20 +1,7 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Footer.css";
 
 const Footer = () => {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
-      setTimeout(() => setSubscribed(false), 4000);
-    }
-  };
-
   return (
     <footer className="footer">
       <div className="footer-container">
