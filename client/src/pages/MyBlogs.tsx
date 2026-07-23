@@ -1,5 +1,5 @@
-﻿import React, { useEffect, useRef, useState } from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
 import { getMyPosts } from "../api/posts";
@@ -19,12 +19,13 @@ const initialForm: BlogFormState = {
 const MyBlogs = () => {
   const { user, loading } = useAuth();
   const { createPost, updatePost, deletePost } = useBlog();
+  const navigate = useNavigate();
+
   const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<BlogFormState>(initialForm);
-  // const navigate = useNavigate();
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
