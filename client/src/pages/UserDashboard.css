@@ -1,12 +1,28 @@
 /* ==========================================================================
-   User Dashboard Styling
+   User Dashboard Modern Styling
    ========================================================================== */
 
-.dashboard-page {
+.admin-page-container {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  gap: 28px;
+  padding: 32px 24px;
+  max-width: 1140px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  color: #0f172a;
+}
+
+/* Base Content Panels */
+.content-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Header & Welcome Banner */
@@ -16,37 +32,37 @@
   justify-content: space-between;
   gap: 24px;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.04);
 }
 
 .dashboard-welcome__badge {
   display: inline-block;
-  background: rgba(99, 102, 241, 0.08);
-  color: #6366f1;
+  background: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 4px 12px;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
   border-radius: 9999px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .dashboard-welcome h1 {
   margin: 0;
   color: #0f172a;
-  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
   font-weight: 800;
   letter-spacing: -0.03em;
+  line-height: 1.25;
 }
 
 .dashboard-welcome__sub {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   color: #64748b;
-  font-size: 0.95rem;
+  font-size: 0.925rem;
 }
 
 .dashboard-welcome__sub strong {
@@ -55,6 +71,20 @@
 }
 
 /* Section Head Utilities */
+.section-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+}
+
+.section-head p {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
 .section-head--between {
   display: flex;
   align-items: flex-end;
@@ -65,7 +95,7 @@
 .dashboard-count-badge {
   background: #f1f5f9;
   color: #475569;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 9999px;
@@ -77,17 +107,16 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .dashboard-card {
   position: relative;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
   background: #ffffff;
-  padding: 24px;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
-  transition: all 0.25s ease;
+  padding: 22px 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   overflow: hidden;
 }
 
@@ -97,58 +126,72 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #cbd5e1, #94a3b8);
-  opacity: 0.6;
+  height: 3px;
+  background: #cbd5e1;
 }
 
 .dashboard-card--highlight::before {
-  background: linear-gradient(90deg, #4f46e5, #7c3aed);
-  opacity: 1;
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
 }
 
 .dashboard-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08);
-  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+  border-color: #cbd5e1;
 }
 
 .dashboard-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .dashboard-card__label {
   margin: 0;
   color: #64748b;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
 }
 
-.dashboard-card__icon {
-  font-size: 1.2rem;
+.dashboard-card__icon-wrapper {
   background: #f8fafc;
-  padding: 6px;
+  border: 1px solid #f1f5f9;
+  padding: 8px;
   border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-card__icon {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .dashboard-card__value {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.85rem;
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.dashboard-card__subtext {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.775rem;
+  color: #94a3b8;
+  font-weight: 500;
 }
 
 /* Modern Data Table */
 .admin-table-wrapper {
   overflow-x: auto;
   background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 20px;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
 }
 
 .admin-table {
@@ -161,19 +204,19 @@
 .admin-table th {
   background: #f8fafc;
   color: #475569;
-  font-size: 0.75rem;
+  font-size: 0.725rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 16px 20px;
+  letter-spacing: 0.07em;
+  padding: 14px 18px;
   border-bottom: 1px solid #e2e8f0;
 }
 
 .admin-table td {
-  padding: 18px 20px;
+  padding: 16px 18px;
   border-bottom: 1px solid #f1f5f9;
   color: #334155;
-  font-size: 0.925rem;
+  font-size: 0.875rem;
   vertical-align: middle;
 }
 
@@ -187,23 +230,30 @@
 }
 
 .admin-table__row:hover {
-  background-color: rgba(248, 250, 252, 0.8);
+  background-color: #f8fafc;
+}
+
+.admin-table__row:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: -2px;
+  background-color: #f8fafc;
 }
 
 .admin-table__cell--title strong {
   color: #0f172a;
-  font-weight: 700;
+  font-weight: 600;
   display: block;
+  font-size: 0.925rem;
 }
 
 .admin-table__date-tag {
   display: inline-block;
   background: #f1f5f9;
   color: #475569;
-  font-size: 0.8rem;
+  font-size: 0.775rem;
   font-weight: 600;
   padding: 4px 10px;
-  border-radius: 8px;
+  border-radius: 6px;
   white-space: nowrap;
 }
 
@@ -214,7 +264,7 @@
 
 /* Empty State */
 .admin-table-empty {
-  padding: 48px 24px !important;
+  padding: 48px 20px !important;
   text-align: center;
 }
 
@@ -228,28 +278,28 @@
 }
 
 .dashboard-empty-state__icon {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   background: #f1f5f9;
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 .dashboard-empty-state h3 {
   margin: 0;
   color: #0f172a;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
 .dashboard-empty-state p {
   margin: 0 0 8px;
   color: #64748b;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
 }
 
 /* Error Alert */
@@ -261,35 +311,34 @@
   background: #fff1f2;
   border: 1px solid #fecdd3;
   padding: 14px 18px;
-  border-radius: 14px;
-  font-size: 0.9rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
   font-weight: 500;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 /* Loading Skeletons */
 .dashboard-skeleton {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding-top: 24px;
+  gap: 20px;
 }
 
 .skeleton-block {
   background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
   background-size: 200% 100%;
-  animation: skeleton-pulse 1.5s infinite ease-in-out;
-  border-radius: 20px;
+  animation: skeleton-shimmer 1.5s infinite linear;
+  border-radius: 12px;
 }
 
 .skeleton-block--header {
-  height: 120px;
+  height: 110px;
 }
 
 .skeleton-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .skeleton-block--card {
@@ -300,7 +349,7 @@
   height: 240px;
 }
 
-@keyframes skeleton-pulse {
+@keyframes skeleton-shimmer {
   0% {
     background-position: 200% 0;
   }
@@ -311,6 +360,11 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+  .admin-page-container {
+    padding: 16px;
+    gap: 20px;
+  }
+
   .dashboard-welcome {
     flex-direction: column;
     align-items: flex-start;

@@ -1,58 +1,89 @@
-import axios from "axios";
+import adminApi from "./adminAxios";
 import { ENDPOINTS } from "./endpoints";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL;
-const ADMIN_TOKEN_KEY = "blogweb_admin_token";
 
-const adminApi = axios.create({
-  baseURL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export type AdminUser = {
+  id:number | string;
+  name:string;
+  email:string;
+  role?:string;
+  created_at:string;
+  updated_at:string;
+  blogCount?:number;
+};
 
-adminApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem(ADMIN_TOKEN_KEY);
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+
+
+export const loginAdmin = async (
+  email:string,
+  password:string
+) => {
+
+  const {data} = await adminApi.post(
+    ENDPOINTS.admin.login,
+    {
+      email,
+      password
+    }
+  );
+
+
+  return data as {
+    token:string;
+  };
+};
+
+
 
 export const verifyAdminToken = async () => {
-  const { data } = await adminApi.get(ENDPOINTS.admin.verify);
+
+  const {data} = await adminApi.get(
+    ENDPOINTS.admin.verify
+  );
+
+
   return data;
 };
 
 
-export const loginAdmin = async (email: string, password: string) => {
-  const response = await adminApi.post(ENDPOINTS.admin.login, { email, password });
-  return response.data as { token: string };
-};
 
 export const fetchAdminMetrics = async () => {
-  const response = await adminApi.get(ENDPOINTS.admin.metrics);
-  return response.data as {
-    totalUsers: number;
-    revenue: number | null;
-    activeSessions: number | null;
+
+  const {data} = await adminApi.get(
+    ENDPOINTS.admin.metrics
+  );
+
+
+  return data as {
+    totalUsers:number;
+    totalBlogs:number;
+    revenue?:number;
+    activeSessions?:number;
   };
 };
 
-export type AdminUser = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  created_at: string;
-  updated_at: string;
-};
+
 
 export const fetchAdminUsers = async () => {
-  const response = await adminApi.get(ENDPOINTS.admin.users);
-  return response.data as { users: AdminUser[] };
+
+  const {data} = await adminApi.get(
+    ENDPOINTS.admin.users
+  );
+
+
+  return data as {
+    users:AdminUser[];
+  };
 };
 
-export const deleteAdminUser = async (id: number) => {
-  await adminApi.delete(ENDPOINTS.admin.deleteUser(id));
+
+
+export const deleteAdminUser = async (
+  id:number|string
+) => {
+
+  await adminApi.delete(
+    ENDPOINTS.admin.deleteUser(id)
+  );
+
 };

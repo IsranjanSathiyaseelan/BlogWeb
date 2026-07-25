@@ -62,7 +62,7 @@ export const createPost = async (
 };
 
 export const updatePost = async (
-  id: number,
+  id: number |string,
   payload: UpdateBlogPostPayload,
 ): Promise<BlogPost> => {
   const body = {
