@@ -58,7 +58,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
 
     try {
-      const { token, user: loggedInUser } = await authApi.login(credentials);
+      const { token, user: loggedInUser } =
+        await authApi.login(credentials);
 
       const normalizedUser = normalizeUser(loggedInUser);
 
@@ -73,7 +74,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
 
     try {
-      const { token, user: nextUser } = await authApi.signup(credentials);
+      const { token, user: nextUser } = await authApi.signup({
+        email: credentials.email,
+        password: credentials.password,
+        name: credentials.name ?? "",
+      });
 
       const normalizedUser = normalizeUser(nextUser);
 

@@ -16,7 +16,10 @@ const AdminDashboardPage = () => {
     const loadMetrics = async () => {
       try {
         const data = await fetchAdminMetrics();
-        setMetrics(data);
+        setMetrics({
+  ...data,
+  activeSessions: data.activeSessions ?? null,
+});
       } catch {
         setError("Unable to load dashboard metrics.");
       } finally {

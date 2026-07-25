@@ -27,15 +27,18 @@ const AdminUsersPage = () => {
 
   const handleDelete = async (user: AdminUser) => {
     const confirmed = window.confirm(
-      `Are you sure you want to delete ${user.name}? This action cannot be undone.`
+      `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
     );
+
     if (!confirmed) return;
 
-    setDeletingId(user.id);
+    setDeletingId(Number(user.id));
+
     setError("");
 
     try {
       await deleteAdminUser(user.id);
+
       setUsers((current) => current.filter((u) => u.id !== user.id));
     } catch {
       setError(`Failed to delete ${user.name}. Please try again.`);
@@ -50,7 +53,7 @@ const AdminUsersPage = () => {
     return users.filter(
       (u) =>
         u.name.toLowerCase().includes(query) ||
-        u.email.toLowerCase().includes(query)
+        u.email.toLowerCase().includes(query),
     );
   }, [users, searchQuery]);
 
@@ -146,7 +149,8 @@ const AdminUsersPage = () => {
               </tr>
             ) : (
               filteredUsers.map((user) => {
-                const isDeleting = deletingId === user.id;
+                const userId = Number(user.id);
+                const isDeleting = deletingId === userId;
                 const isAdmin = user.role?.toLowerCase() === "admin";
 
                 return (

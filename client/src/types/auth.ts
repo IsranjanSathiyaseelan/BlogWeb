@@ -9,7 +9,7 @@ export interface AuthUser {
 export interface AuthCredentials {
   email: string;
   password: string;
-  name: string;
+  name?: string;
 }
 
 export interface AuthContextValue {
