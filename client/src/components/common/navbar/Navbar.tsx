@@ -25,7 +25,6 @@ const Navbar = () => {
     ? [
         ...baseNavItems,
         { label: "Dashboard", to: "/dashboard" },
-        { label: "My Blog", to: "/myblog" },
       ]
     : baseNavItems;
 

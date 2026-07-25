@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { verifyAdminToken } from "../../api/admin";
+import { verifyUserToken } from "../../api/auth";
 
-const ADMIN_TOKEN_KEY = "blogweb_admin_token";
+const USER_TOKEN_KEY = "blogweb_token";
 
-const AdminGuard = () => {
+const UserGuard = () => {
   const location = useLocation();
+
   const [checking, setChecking] = useState(true);
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem(ADMIN_TOKEN_KEY);
+    const token = localStorage.getItem(USER_TOKEN_KEY);
 
     if (!token) {
       setAuthorized(false);
@@ -20,11 +21,14 @@ const AdminGuard = () => {
 
     const verify = async () => {
       try {
-        await verifyAdminToken();
+        await verifyUserToken();
+
         setAuthorized(true);
       } catch (error) {
-        console.error("Admin token verification failed", error);
-        localStorage.removeItem(ADMIN_TOKEN_KEY);
+        console.error("User token verification failed", error);
+
+        localStorage.removeItem(USER_TOKEN_KEY);
+
         setAuthorized(false);
       } finally {
         setChecking(false);
@@ -35,14 +39,14 @@ const AdminGuard = () => {
   }, []);
 
   if (checking) {
-    return <div>Checking admin access…</div>;
+    return <div>Checking user access...</div>;
   }
 
   if (!authorized) {
-    return <Navigate to="/admin/login" replace state={{ from: location }} />;
+    return <Navigate to="/signin" replace state={{ from: location }} />;
   }
 
   return <Outlet />;
 };
 
-export default AdminGuard;
+export default UserGuard;

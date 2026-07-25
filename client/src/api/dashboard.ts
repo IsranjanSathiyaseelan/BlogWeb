@@ -21,7 +21,7 @@ export const getUserDashboard = async () => {
   ]);
 
   const user: User = {
-    id: userResponse.user.id,
+    id: String(userResponse.user.id),
     name: userResponse.user.name,
     email: userResponse.user.email,
     createdAt: new Date(userResponse.user.createdAt ?? Date.now()),

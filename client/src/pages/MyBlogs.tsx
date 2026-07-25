@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useBlog } from "../context/blog/BlogContext";
 import { getMyPosts } from "../api/posts";
@@ -8,7 +8,7 @@ import type { BlogFormState, BlogPost } from "../types/blog";
 import "./pages.css";
 import "./MyBlogs.css";
 
-const initialForm: BlogFormState = {
+const INITIAL_FORM: BlogFormState = {
   title: "",
   excerpt: "",
   category: "Product",
@@ -16,19 +16,20 @@ const initialForm: BlogFormState = {
   content: "",
 };
 
-const MyBlogs = () => {
+const MyBlogs: React.FC = () => {
   const { user, loading } = useAuth();
   const { createPost, updatePost, deletePost } = useBlog();
-  const navigate = useNavigate();
 
   const [userPosts, setUserPosts] = useState<BlogPost[]>([]);
-  const [loadingPosts, setLoadingPosts] = useState(true);
-  const [error, setError] = useState("");
+  const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [form, setForm] = useState<BlogFormState>(initialForm);
+  const [form, setForm] = useState<BlogFormState>(INITIAL_FORM);
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let isMounted = true;
     if (!user) return;
 
     const loadMyPosts = async () => {
@@ -37,22 +38,28 @@ const MyBlogs = () => {
 
       try {
         const posts = await getMyPosts();
-        setUserPosts(posts);
+        if (isMounted) setUserPosts(posts);
       } catch (err) {
-        console.error(err);
-        setError("Unable to load your blog posts.");
+        if (isMounted) {
+          console.error(err);
+          setError("Unable to load your blog posts.");
+        }
       } finally {
-        setLoadingPosts(false);
+        if (isMounted) setLoadingPosts(false);
       }
     };
 
     loadMyPosts();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   if (loading || loadingPosts) {
     return (
       <div className="page myblogs">
-        <div className="myblogs-skeleton">
+        <div className="myblogs-skeleton" aria-label="Loading content studio">
           <div className="skeleton-box skeleton-box--form" />
           <div className="skeleton-grid">
             <div className="skeleton-box skeleton-box--card" />
@@ -70,21 +77,20 @@ const MyBlogs = () => {
 
   const resetForm = () => {
     setEditingId(null);
-    setForm(initialForm);
+    setForm(INITIAL_FORM);
     setError("");
   };
 
   const addOrUpdateLocalPosts = (updatedPost: BlogPost) => {
     setUserPosts((current) => {
       const existingIndex = current.findIndex(
-        (item) => item.id === updatedPost.id
+        (item) => item.id === updatedPost.id,
       );
       if (existingIndex >= 0) {
         return current.map((item) =>
-          item.id === updatedPost.id ? updatedPost : item
+          item.id === updatedPost.id ? updatedPost : item,
         );
       }
-
       return [updatedPost, ...current];
     });
   };
@@ -93,6 +99,9 @@ const MyBlogs = () => {
     event.preventDefault();
 
     if (!form.content.trim()) return;
+
+    setSubmitting(true);
+    setError("");
 
     const payload = {
       title: form.title.trim(),
@@ -118,6 +127,8 @@ const MyBlogs = () => {
     } catch (err) {
       console.error(err);
       setError("Unable to save the post. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -126,7 +137,6 @@ const MyBlogs = () => {
     if (!post) return;
 
     setEditingId(post.id);
-
     setForm({
       title: post.title,
       excerpt: post.excerpt,
@@ -145,35 +155,24 @@ const MyBlogs = () => {
       return;
     }
 
+    const previousPosts = [...userPosts];
+    // Optimistic Removal
+    setUserPosts((current) => current.filter((post) => post.id !== id));
+
     try {
       await deletePost(id);
-      setUserPosts((current) => current.filter((post) => post.id !== id));
       if (editingId === id) resetForm();
     } catch (err) {
       console.error(err);
+      // Revert Optimistic Change
+      setUserPosts(previousPosts);
       setError("Unable to delete the post. Please try again.");
     }
   };
 
   return (
     <div className="page myblogs">
-      {/* Top Header */}
-      <div className="myblogs__header">
-        <div>
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="myblogs-back-btn"
-          >
-            ← Back to Dashboard
-          </button>
-          <h1>Content Studio</h1>
-          <p className="myblogs__sub">
-            Craft, refine, and publish articles for your audience.
-          </p>
-        </div>
-      </div>
-
-      {/* Form Editor (Frameless outer wrapper) */}
+      {/* Form Editor */}
       <div ref={formRef} className="blog-manager-container">
         <form onSubmit={handleSubmit} className="blog-manager__form">
           <div className="blog-manager__header">
@@ -187,21 +186,14 @@ const MyBlogs = () => {
               </span>
               <h2>{editingId ? "Update Article" : "Write a New Article"}</h2>
             </div>
-
-            <div className="blog-manager__header-actions">
-              {editingId && (
-                <Button type="button" variant="outline" onClick={resetForm}>
-                  Discard Changes
-                </Button>
-              )}
-              <Button type="submit" variant="primary">
-                {editingId ? "Save Changes" : "Publish Article"}
-              </Button>
-            </div>
           </div>
 
           {error && (
-            <div className="blog-manager__error">
+            <div
+              className="blog-manager__error"
+              role="alert"
+              aria-live="polite"
+            >
               <svg
                 width="18"
                 height="18"
@@ -211,7 +203,7 @@ const MyBlogs = () => {
                 strokeWidth="2"
               >
                 <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" />
+                <line x1="12" y1="8" x2="12" y2="12" />
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
               <span>{error}</span>
@@ -221,7 +213,11 @@ const MyBlogs = () => {
           <div className="blog-manager__fields">
             {/* Title Input */}
             <div className="blog-manager__field blog-manager__field--hero">
+              <label htmlFor="article-title" className="visually-hidden">
+                Article Title
+              </label>
               <input
+                id="article-title"
                 className="input-title"
                 placeholder="Article Title..."
                 value={form.title}
@@ -237,7 +233,9 @@ const MyBlogs = () => {
               <div className="blog-manager__field">
                 <label htmlFor="category-select">Category</label>
                 <div className="input-with-icon">
-                  <span className="input-icon">🏷️</span>
+                  <span className="input-icon" aria-hidden="true">
+                    🏷️
+                  </span>
                   <input
                     id="category-select"
                     placeholder="e.g. Engineering, Design"
@@ -252,7 +250,9 @@ const MyBlogs = () => {
               <div className="blog-manager__field">
                 <label htmlFor="read-time-input">Read Time (minutes)</label>
                 <div className="input-with-icon">
-                  <span className="input-icon">⏱️</span>
+                  <span className="input-icon" aria-hidden="true">
+                    ⏱️
+                  </span>
                   <input
                     id="read-time-input"
                     type="number"
@@ -274,14 +274,15 @@ const MyBlogs = () => {
             <div className="blog-manager__field">
               <div className="field-label-row">
                 <label htmlFor="excerpt-input">Summary Excerpt</label>
-                <span className="field-hint">
-                  {form.excerpt.length}/160 chars
+                <span className="field-hint" id="excerpt-hint">
+                  {form.excerpt.length}/200 chars
                 </span>
               </div>
               <textarea
                 id="excerpt-input"
                 rows={2}
                 maxLength={200}
+                aria-describedby="excerpt-hint"
                 placeholder="Write a brief preview summary that will show on post cards..."
                 value={form.excerpt}
                 onChange={(e) =>
@@ -300,7 +301,7 @@ const MyBlogs = () => {
               <textarea
                 id="content-input"
                 className="input-content"
-                rows={12}
+                rows={10}
                 placeholder="Start writing your article body here..."
                 value={form.content}
                 onChange={(e) =>
@@ -309,6 +310,27 @@ const MyBlogs = () => {
                 required
               />
             </div>
+          </div>
+
+          {/* Form Action Footer */}
+          <div className="blog-manager__footer">
+            {editingId && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                disabled={submitting}
+              >
+                Discard Changes
+              </Button>
+            )}
+            <Button type="submit" variant="primary" disabled={submitting}>
+              {submitting
+                ? "Saving..."
+                : editingId
+                  ? "Save Changes"
+                  : "Publish Article"}
+            </Button>
           </div>
         </form>
       </div>
@@ -327,7 +349,9 @@ const MyBlogs = () => {
 
         {userPosts.length === 0 ? (
           <div className="myblogs__empty">
-            <div className="myblogs__empty-icon">✍️</div>
+            <div className="myblogs__empty-icon" aria-hidden="true">
+              ✍️
+            </div>
             <h3>No articles published yet</h3>
             <p>Use the editor above to craft your first post!</p>
           </div>
