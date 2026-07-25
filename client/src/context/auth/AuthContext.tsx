@@ -18,6 +18,11 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const USER_STORAGE_KEY = "blogweb_user";
 const TOKEN_STORAGE_KEY = "blogweb_token";
 
+const normalizeUser = (user: authApi.AuthUser): AuthUser => ({
+  ...user,
+  id: String(user.id),
+});
+
 const saveAuth = (user: AuthUser | null, token?: string | null) => {
   if (user) {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
@@ -35,6 +40,7 @@ const saveAuth = (user: AuthUser | null, token?: string | null) => {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthUser | null>(() => {
     const stored = localStorage.getItem(USER_STORAGE_KEY);
+
     if (stored) {
       try {
         return JSON.parse(stored) as AuthUser;
@@ -42,8 +48,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.removeItem(USER_STORAGE_KEY);
       }
     }
+
     return null;
   });
+
   const [loading, setLoading] = useState(false);
 
   const login = useCallback(async (credentials: AuthCredentials) => {
@@ -51,8 +59,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       const { token, user: loggedInUser } = await authApi.login(credentials);
-      saveAuth(loggedInUser, token);
-      setUser(loggedInUser);
+
+      const normalizedUser = normalizeUser(loggedInUser);
+
+      saveAuth(normalizedUser, token);
+      setUser(normalizedUser);
     } finally {
       setLoading(false);
     }
@@ -63,8 +74,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       const { token, user: nextUser } = await authApi.signup(credentials);
-      saveAuth(nextUser, token);
-      setUser(nextUser);
+
+      const normalizedUser = normalizeUser(nextUser);
+
+      saveAuth(normalizedUser, token);
+      setUser(normalizedUser);
     } finally {
       setLoading(false);
     }
@@ -77,13 +91,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+
     if (!user && token) {
       setLoading(true);
+
       authApi
         .getCurrentUser()
         .then(({ user: currentUser }) => {
-          setUser(currentUser);
-          saveAuth(currentUser, token);
+          const normalizedUser = normalizeUser(currentUser);
+
+          setUser(normalizedUser);
+          saveAuth(normalizedUser, token);
         })
         .catch(() => {
           logout();
@@ -102,7 +120,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
