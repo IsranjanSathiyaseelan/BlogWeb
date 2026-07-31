@@ -29,7 +29,8 @@ const normalizePost = (post: any): BlogPost => ({
           .filter(Boolean)
       : post.content,
   imageUrl: post.imageUrl ?? post.image_url ?? images.post,
-  author: post.author ?? post.author_name ?? `Author ${post.author_id}`,
+  author: typeof post.author === "string" ? post.author : (post.author?.name ?? post.author_name ?? `Author ${post.author_id ?? post.authorId}`),
+  authorEmail: post.authorEmail ?? post.author_email ?? post.author?.email ?? "",
   publishedAt: post.publishedAt ?? post.published_at,
   readMinutes: post.readMinutes ?? post.read_minutes,
   category: post.category,

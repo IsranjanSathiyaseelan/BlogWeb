@@ -27,6 +27,14 @@ export const ENDPOINTS = {
 
    deleteUser:(id:number|string)=>
      `/admin/users/${id}`,
- }
+ },
 
-};
+ charts:{
+   adminActivity:"/charts/admin/activity",
+   adminCategories:"/charts/admin/categories",
+   adminUserGrowth:"/charts/admin/user-growth",
+   userActivity:"/charts/user/activity",
+   userCategories:"/charts/user/categories",
+ },
+
+};

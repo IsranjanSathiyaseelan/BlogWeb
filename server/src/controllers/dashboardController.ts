@@ -12,15 +12,19 @@ const formatBlog = (post: {
   id: number;
   title: string;
   content: string;
+  category?: string | null;
   authorId: number;
   publishedAt: Date;
 }) => ({
   id: String(post.id),
   title: post.title,
   content: post.content,
+  category: post.category || "Uncategorized",
   userId: String(post.authorId),
   createdAt: post.publishedAt,
 });
+
+const CATEGORY_COLORS = ["#2563eb", "#8b5cf6", "#10b981", "#f59e0b", "#ec4899", "#06b6d4"];
 
 export const getUserDashboard = async (req: Request, res: Response) => {
   try {
@@ -45,15 +49,31 @@ export const getUserDashboard = async (req: Request, res: Response) => {
         id: true,
         title: true,
         content: true,
+        category: true,
         authorId: true,
         publishedAt: true,
       },
       orderBy: { publishedAt: "desc" },
     });
 
+    // Dynamically calculate Topics & Categories distribution for this user
+    const categoryMap: Record<string, number> = {};
+    posts.forEach((p) => {
+      const cat = p.category?.trim() || "Uncategorized";
+      categoryMap[cat] = (categoryMap[cat] || 0) + 1;
+    });
+
+    const categoryDistribution = Object.entries(categoryMap).map(([category, count], idx) => ({
+      category,
+      count,
+      color: CATEGORY_COLORS[idx % CATEGORY_COLORS.length],
+    }));
+
     return res.status(200).json({
       user: sanitizeUser(user),
       blogs: posts.map(formatBlog),
+      categoryDistribution,
+      topics: categoryDistribution,
     });
   } catch (error) {
     console.error("Error fetching user dashboard:", error);

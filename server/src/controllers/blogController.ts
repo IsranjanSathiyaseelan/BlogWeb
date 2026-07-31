@@ -1,4 +1,4 @@
-﻿import { Request, Response } from "express";
+import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 
 // ----------------------
@@ -35,7 +35,7 @@ type PostWithAuthor = {
   excerpt: string;
   content: string;
   authorId: number;
-  author: { name: string } | null;
+  author: { name: string; email: string } | null;
   publishedAt: Date;
   readMinutes: number;
   category: string;
@@ -49,6 +49,7 @@ const formatPost = (post: PostWithAuthor) => ({
   excerpt: post.excerpt,
   content: post.content,
   author: post.author?.name ?? `Author ${post.authorId}`,
+  authorEmail: post.author?.email ?? "",
   authorId: post.authorId,
   publishedAt: post.publishedAt.toISOString().split("T")[0],
   readMinutes: post.readMinutes,
@@ -56,7 +57,7 @@ const formatPost = (post: PostWithAuthor) => ({
   featured: post.featured,
 });
 
-const postWithAuthorInclude = { author: { select: { name: true } } };
+const postWithAuthorInclude = { author: { select: { name: true, email: true } } };
 
 // ----------------------
 // Get all posts

@@ -14,21 +14,41 @@ const normalizePost = (post: any): Blog => ({
     : new Date(),
 });
 
+import api from "./axios";
+
 export const getUserDashboard = async () => {
-  const [userResponse, posts] = await Promise.all([
-    getCurrentUser(),
-    getMyPosts(),
-  ]);
+  try {
+    const { data } = await api.get("/dashboard");
+    const user: User = {
+      id: String(data.user.id),
+      name: data.user.name,
+      email: data.user.email,
+      createdAt: new Date(data.user.createdAt ?? Date.now()),
+    };
 
-  const user: User = {
-    id: String(userResponse.user.id),
-    name: userResponse.user.name,
-    email: userResponse.user.email,
-    createdAt: new Date(userResponse.user.createdAt ?? Date.now()),
-  };
+    return {
+      user,
+      blogs: (data.blogs || []).map(normalizePost),
+      monthlyActivity: data.monthlyActivity as Array<{ month: string; articles: number; views: number }>,
+      categoryDistribution: data.categoryDistribution as Array<{ category: string; count: number; color: string }>,
+    };
+  } catch {
+    // Fallback to client aggregation if endpoint fails
+    const [userResponse, posts] = await Promise.all([
+      getCurrentUser(),
+      getMyPosts(),
+    ]);
 
-  return {
-    user,
-    blogs: posts.map(normalizePost),
-  };
+    const user: User = {
+      id: String(userResponse.user.id),
+      name: userResponse.user.name,
+      email: userResponse.user.email,
+      createdAt: new Date(userResponse.user.createdAt ?? Date.now()),
+    };
+
+    return {
+      user,
+      blogs: posts.map(normalizePost),
+    };
+  }
 };

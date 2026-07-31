@@ -4,13 +4,25 @@ import type { Blog, User } from "../types/dashboard";
 import Button from "../components/common/button/Button";
 import useAuth from "../hooks/useAuth";
 import { getUserDashboard } from "../api/dashboard";
+import {
+  fetchUserActivityChart,
+  fetchUserCategoryChart,
+} from "../api/charts";
+import type { MonthlyActivityPoint, CategoryPoint } from "../api/charts";
+import {
+  ActivityTrendChart,
+  CategoryDistributionChart,
+} from "../components/common/charts/DashboardCharts";
 import "./pages.css";
 import "./UserDashboard.css";
+import "./admin/AdminDashboardPage.css";
 
 const UserDashboard: React.FC = () => {
   const { user, loading } = useAuth();
   const [dashboardUser, setDashboardUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Blog[]>([]);
+  const [monthlyActivity, setMonthlyActivity] = useState<MonthlyActivityPoint[]>([]);
+  const [categoryDistribution, setCategoryDistribution] = useState<CategoryPoint[]>([]);
   const [loadingDashboard, setLoadingDashboard] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
@@ -24,10 +36,17 @@ const UserDashboard: React.FC = () => {
       setError("");
 
       try {
-        const data = await getUserDashboard();
+        const [dashboardData, activity, categories] = await Promise.all([
+          getUserDashboard(),
+          fetchUserActivityChart(),
+          fetchUserCategoryChart(),
+        ]);
+
         if (isMounted) {
-          setDashboardUser(data.user);
-          setPosts(data.blogs);
+          setDashboardUser(dashboardData.user);
+          setPosts(dashboardData.blogs);
+          setMonthlyActivity(activity);
+          setCategoryDistribution(categories);
         }
       } catch (err) {
         if (isMounted) {
@@ -74,16 +93,11 @@ const UserDashboard: React.FC = () => {
 
   if (loading || loadingDashboard) {
     return (
-      <div className="admin-page-container">
-        <div className="dashboard-skeleton">
-          <div className="skeleton-block skeleton-block--header" />
-
-          <div className="skeleton-grid">
-            <div className="skeleton-block skeleton-block--card" />
-            <div className="skeleton-block skeleton-block--card" />
-          </div>
-
-          <div className="skeleton-block skeleton-block--table" />
+      <div className="admin-dashboard-page">
+        <div className="admin-skeleton-pulse" style={{ width: "220px", height: "36px", marginBottom: "20px" }} />
+        <div className="admin-metrics-grid">
+          <div className="admin-metric-card" style={{ height: "120px" }} />
+          <div className="admin-metric-card" style={{ height: "120px" }} />
         </div>
       </div>
     );
@@ -94,114 +108,124 @@ const UserDashboard: React.FC = () => {
   }
 
   return (
-    <div className="admin-page-container">
-      {/* Metrics Section */}
-      <section className="content-panel">
-        <div className="section-head">
-          <h2>Overview & Analytics</h2>
-          <p>Key indicators and growth for your publishing profile.</p>
+    <div className="admin-dashboard-page">
+      {/* Top Banner Matching Admin Dashboard Style */}
+      <header className="admin-dashboard-header">
+        <div>
+          <h1 className="admin-dashboard-title">
+            Welcome back, {dashboardUser?.name || user.email.split("@")[0]}
+          </h1>
+          <p className="admin-dashboard-subtitle">
+            Manage your personal articles, publishing velocity, and performance analytics.
+          </p>
+        </div>
+      </header>
+
+      {/* Global Error Banner */}
+      {error && (
+        <div className="admin-error-message">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Metrics Grid matching Admin Dashboard style */}
+      <section className="admin-metrics-grid">
+        <div className="admin-metric-card">
+          <div className="admin-metric-card__header">
+            <p className="admin-metric-card__label">Member Since</p>
+            <div className="admin-metric-card__icon admin-metric-card__icon--blue">
+              📅
+            </div>
+          </div>
+          <p className="admin-metric-card__value" style={{ fontSize: "1.5rem" }}>
+            {formatDate(dashboardUser?.createdAt)}
+          </p>
+          <span className="admin-metric-card__subtext">Active contributor</span>
         </div>
 
-        {error ? (
-          <div className="blog-manager__error" role="alert" aria-live="polite">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <span>{error}</span>
-          </div>
-        ) : (
-          <div className="dashboard-summary-grid">
-            <div className="dashboard-card">
-              <div className="dashboard-card__header">
-                <span className="dashboard-card__label">Member Since</span>
-                <div className="dashboard-card__icon-wrapper">
-                  <span className="dashboard-card__icon" aria-hidden="true">
-                    📅
-                  </span>
-                </div>
-              </div>
-
-              <p className="dashboard-card__value">
-                {formatDate(dashboardUser?.createdAt)}
-              </p>
-              <span className="dashboard-card__subtext">Active account</span>
-            </div>
-
-            <div className="dashboard-card dashboard-card--highlight">
-              <div className="dashboard-card__header">
-                <span className="dashboard-card__label">
-                  Total Articles Published
-                </span>
-                <div className="dashboard-card__icon-wrapper">
-                  <span className="dashboard-card__icon" aria-hidden="true">
-                    ✍️
-                  </span>
-                </div>
-              </div>
-
-              <p className="dashboard-card__value">{posts.length}</p>
-              <span className="dashboard-card__subtext">
-                {posts.length === 1
-                  ? "1 article live"
-                  : `${posts.length} articles live`}
-              </span>
+        <div className="admin-metric-card">
+          <div className="admin-metric-card__header">
+            <p className="admin-metric-card__label">Articles Published</p>
+            <div className="admin-metric-card__icon admin-metric-card__icon--green">
+              ✍️
             </div>
           </div>
-        )}
+          <p className="admin-metric-card__value">{posts.length}</p>
+          <span className="admin-metric-card__subtext">
+            {posts.length === 1 ? "1 article live" : `${posts.length} articles live`}
+          </span>
+        </div>
       </section>
 
-      {/* Posts Table Section */}
-      <section className="content-panel">
-        <div className="section-head section-head--between">
+      {/* CHARTS SECTION */}
+      <section className="admin-charts-section">
+        <div className="admin-charts-grid">
+          <ActivityTrendChart
+            data={monthlyActivity.length > 0 ? monthlyActivity : undefined}
+            title="My Publishing Activity"
+            subtitle="Monthly articles published on your account"
+          />
+          <CategoryDistributionChart
+            data={categoryDistribution}
+            title="My Topics & Categories"
+          />
+        </div>
+      </section>
+
+      {/* Posts Table Section matching Admin Dashboard style */}
+      <section className="admin-posts-section">
+        <div className="admin-posts-header">
           <div>
-            <h2>Recent Articles</h2>
-            <p>Your latest written content and drafts.</p>
+            <h2 className="admin-table-title">Recent Articles</h2>
+            <p className="admin-table-subtitle">Your latest written content and drafts.</p>
           </div>
 
-          {posts.length > 0 && (
-            <span className="dashboard-count-badge">{posts.length} Total</span>
-          )}
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            {posts.length > 0 && (
+              <span className="admin-category-badge">{posts.length} Total</span>
+            )}
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => navigate("/myblog")}
+            >
+              + Create New Post
+            </Button>
+          </div>
         </div>
 
         <div className="admin-table-wrapper">
           <table className="admin-table">
             <thead>
               <tr>
-                <th style={{ width: "40%" }}>Title</th>
-                <th style={{ width: "20%" }}>Published</th>
-                <th style={{ width: "40%" }}>Excerpt Preview</th>
+                <th style={{ width: "45%" }}>Title</th>
+                <th style={{ width: "20%" }}>Published Date</th>
+                <th style={{ width: "35%" }}>Content Preview</th>
               </tr>
             </thead>
 
             <tbody>
               {posts.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="admin-table-empty">
-                    <div className="dashboard-empty-state">
-                      <div
-                        className="dashboard-empty-state__icon"
-                        aria-hidden="true"
-                      >
-                        📝
-                      </div>
-
+                  <td colSpan={3}>
+                    <div className="admin-table-empty">
+                      <div className="admin-empty-icon">📝</div>
                       <h3>No articles yet</h3>
-
                       <p>
-                        You haven't published any content yet. Start sharing
-                        your insights today!
+                        You haven't published any content yet. Start sharing your insights today!
                       </p>
-
                       <Button
                         type="button"
                         variant="primary"
@@ -216,24 +240,25 @@ const UserDashboard: React.FC = () => {
                 posts.map((post) => (
                   <tr
                     key={post.id}
-                    className="admin-table__row"
+                    className="admin-posts-row"
                     role="button"
                     tabIndex={0}
                     onClick={() => navigate("/myblog")}
                     onKeyDown={(e) => handleRowKeyDown(e, "/myblog")}
                     title="Click to manage post"
+                    style={{ cursor: "pointer" }}
                   >
-                    <td className="admin-table__cell--title">
-                      <strong>{post.title}</strong>
+                    <td>
+                      <strong className="admin-post-title">{post.title}</strong>
                     </td>
 
                     <td>
-                      <span className="admin-table__date-tag">
+                      <span className="admin-date-text">
                         {formatDate(post.createdAt)}
                       </span>
                     </td>
 
-                    <td className="admin-table__cell--excerpt">
+                    <td style={{ color: "#64748b", fontSize: "0.875rem" }}>
                       {post.content.slice(0, 110)}
                       {post.content.length > 110 ? "…" : ""}
                     </td>

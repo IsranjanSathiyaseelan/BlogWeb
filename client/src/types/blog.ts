@@ -27,6 +27,7 @@ export interface BlogPost {
   content: string[];
   imageUrl: string;
   author: string;
+  authorEmail?: string;
   publishedAt: string;
   readMinutes: number;
   category: BlogCategory;

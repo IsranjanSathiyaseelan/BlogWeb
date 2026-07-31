@@ -48,17 +48,27 @@ export const verifyAdminToken = async () => {
 
 
 export const fetchAdminMetrics = async () => {
-
-  const {data} = await adminApi.get(
+  const { data } = await adminApi.get(
     ENDPOINTS.admin.metrics
   );
 
-
   return data as {
-    totalUsers:number;
-    totalBlogs:number;
-    revenue?:number;
-    activeSessions?:number;
+    totalUsers: number;
+    totalBlogs: number;
+    revenue?: number;
+    activeSessions?: number;
+    monthlyActivity?: Array<{
+      month: string;
+      articles: number;
+      views: number;
+      users: number;
+      sessions: number;
+    }>;
+    categoryDistribution?: Array<{
+      category: string;
+      count: number;
+      color: string;
+    }>;
   };
 };
 

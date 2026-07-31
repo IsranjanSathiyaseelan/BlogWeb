@@ -17,6 +17,7 @@ import AdminGuard from "../components/admin/AdminGuard";
 import AdminLayout from "../components/admin/AdminLayout";
 import AdminLoginPage from "../pages/admin/AdminLoginPage";
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
+import AdminPostsPage from "../pages/admin/AdminPostsPage";
 import AdminUsersPage from "../pages/admin/AdminUsersPage";
 
 import UserGuard from "../components/user/UserGuard";
@@ -34,6 +35,7 @@ const AppRoutes = () => {
           <Route
             path="/admin" element={<Navigate to="/admin/dashboard" replace />}/>
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/posts" element={<AdminPostsPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
         </Route>
       </Route>

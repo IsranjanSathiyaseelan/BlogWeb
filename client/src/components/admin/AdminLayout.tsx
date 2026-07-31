@@ -35,6 +35,17 @@ const AdminLayout = () => {
           </NavLink>
 
           <NavLink
+            to="/admin/posts"
+            className={({ isActive }) =>
+              `admin-sidebar__link ${
+                isActive ? "admin-sidebar__link--active" : ""
+              }`
+            }
+          >
+            Posts Management
+          </NavLink>
+
+          <NavLink
             to="/admin/users"
             className={({ isActive }) =>
               `admin-sidebar__link ${
