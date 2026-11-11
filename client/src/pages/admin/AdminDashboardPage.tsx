@@ -1,20 +1,26 @@
-import { useEffect, useState } from "react";
+
+import { useCallback, useEffect, useState } from "react";
+
 import { fetchAdminMetrics } from "../../api/admin";
+
 import {
   fetchAdminActivityChart,
   fetchAdminCategoryChart,
   fetchAdminUserGrowthChart,
 } from "../../api/charts";
+
 import type {
   AdminMonthlyActivityPoint,
   CategoryPoint,
   UserGrowthPoint,
 } from "../../api/charts";
+
 import {
   ActivityTrendChart,
   CategoryDistributionChart,
   UserGrowthChart,
 } from "../../components/common/charts/DashboardCharts";
+
 import "./AdminDashboardPage.css";
 
 interface MetricsData {
@@ -28,127 +34,169 @@ const AdminDashboardPage = () => {
   const [activityData, setActivityData] = useState<AdminMonthlyActivityPoint[]>([]);
   const [categoryData, setCategoryData] = useState<CategoryPoint[]>([]);
   const [userGrowthData, setUserGrowthData] = useState<UserGrowthPoint[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const loadMetrics = async () => {
-      try {
-        const data = await fetchAdminMetrics();
-        setMetrics({ ...data, activeSessions: data.activeSessions ?? null });
-      } catch {
-        setError("Unable to load dashboard metrics.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadDashboardData = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-    const loadCharts = async () => {
-      try {
-        const [activity, categories, userGrowth] = await Promise.all([
+    try {
+      const [metricsRes, activity, categories, userGrowth] =
+        await Promise.all([
+          fetchAdminMetrics(),
           fetchAdminActivityChart(),
           fetchAdminCategoryChart(),
           fetchAdminUserGrowthChart(),
         ]);
-        setActivityData(activity);
-        setCategoryData(categories);
-        setUserGrowthData(userGrowth);
-      } catch (err) {
-        console.error("Failed to load admin chart data:", err);
-      }
-    };
 
-    loadMetrics();
-    loadCharts();
+      setMetrics({
+        ...metricsRes,
+        activeSessions: metricsRes.activeSessions ?? null,
+      });
+
+      setActivityData(activity);
+      setCategoryData(categories);
+      setUserGrowthData(userGrowth);
+
+    } catch (err) {
+      console.error("Dashboard loading failed:", err);
+      setError("Unable to load dashboard data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const formatNumber = (num: number | null | undefined) => {
-    if (num == null) return "—";
-    return new Intl.NumberFormat("en-US").format(num);
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
+
+  const formatNumber = (value: number | null | undefined) => {
+    return value == null ? "—" : value.toLocaleString("en-US");
   };
 
   return (
-    <div className="admin-dashboard-page">
-      {/* Top Banner */}
+    <main className="admin-dashboard-page">
+
+      {/* Header */}
       <header className="admin-dashboard-header">
         <div>
-          <h1 className="admin-dashboard-title">System Overview</h1>
-          <p className="admin-dashboard-subtitle">
-            Monitor platform health, reader analytics, and system performance metrics.
+          <span className="admin-dashboard-label">
+            ADMINISTRATION
+          </span>
+
+          <h1>Dashboard Overview</h1>
+
+          <p>
+            Monitor your platform performance, users, and publishing activity.
           </p>
         </div>
       </header>
 
-      {/* Global Error Banner */}
+      {/* Error */}
       {error && (
-        <div className="admin-error-message">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{error}</span>
+        <div className="admin-error-message" role="alert">
+          {error}
         </div>
       )}
 
-      {/* Metrics Cards Grid */}
-      <section className="admin-metrics-grid">
-        <div className="admin-metric-card">
-          <div className="admin-metric-card__header">
-            <p className="admin-metric-card__label">Total Users</p>
-            <div className="admin-metric-card__icon admin-metric-card__icon--blue">👥</div>
-          </div>
-          <p className="admin-metric-card__value">
-            {loading ? <span className="admin-skeleton-pulse" /> : formatNumber(metrics?.totalUsers)}
-          </p>
-          <span className="admin-metric-card__subtext">Registered accounts</span>
+      {/* Statistics */}
+      <section className="admin-metrics-section">
+        <div className="admin-section-heading">
+          <h2>Platform Statistics</h2>
+          <p>Overview of your platform's key metrics.</p>
         </div>
 
-        <div className="admin-metric-card">
-          <div className="admin-metric-card__header">
-            <p className="admin-metric-card__label">Total Posts</p>
-            <div className="admin-metric-card__icon admin-metric-card__icon--green">📚</div>
-          </div>
-          <p className="admin-metric-card__value">
-            {loading ? <span className="admin-skeleton-pulse" /> : formatNumber(metrics?.totalBlogs)}
-          </p>
-          <span className="admin-metric-card__subtext">Published articles</span>
-        </div>
+        <div className="admin-metrics-grid">
 
-        <div className="admin-metric-card">
-          <div className="admin-metric-card__header">
-            <p className="admin-metric-card__label">Active Sessions</p>
-            <div className="admin-metric-card__icon admin-metric-card__icon--purple">⚡</div>
-          </div>
-          <p className="admin-metric-card__value">
-            {loading ? <span className="admin-skeleton-pulse" /> : formatNumber(metrics?.activeSessions)}
-          </p>
-          <span className="admin-metric-card__subtext">Live active sessions</span>
+          <article className="admin-metric-card">
+            <div className="admin-metric-icon blue">
+              <span>👥</span>
+            </div>
+
+            <span className="admin-metric-label">
+              Total Registered Users
+            </span>
+
+            <h3>
+              {loading ? "..." : formatNumber(metrics?.totalUsers)}
+            </h3>
+
+            <p>Platform-wide user registrations</p>
+          </article>
+
+          <article className="admin-metric-card">
+            <div className="admin-metric-icon green">
+              <span>📚</span>
+            </div>
+
+            <span className="admin-metric-label">
+              Published Posts
+            </span>
+
+            <h3>
+              {loading ? "..." : formatNumber(metrics?.totalBlogs)}
+            </h3>
+
+            <p>Total public blog articles</p>
+          </article>
+
+          <article className="admin-metric-card">
+            <div className="admin-metric-icon purple">
+              <span>⚡</span>
+            </div>
+
+            <span className="admin-metric-label">
+              Active Sessions
+            </span>
+
+            <h3>
+              {loading ? "..." : formatNumber(metrics?.activeSessions)}
+            </h3>
+
+            <p>Current user connections</p>
+          </article>
+
         </div>
       </section>
 
-      {/* CHARTS SECTION */}
+      {/* Analytics */}
       <section className="admin-charts-section">
-        <div className="admin-charts-grid">
-          <ActivityTrendChart
-            data={activityData}
-            title="Publishing Activity"
-            subtitle="Monthly growth in articles published across the platform"
-          />
-          <CategoryDistributionChart
-            data={categoryData}
-            title="Content Category Breakdown"
-          />
+        <div className="admin-section-heading">
+          <h2>Platform Analytics</h2>
+          <p>Monitor publishing trends and user growth.</p>
         </div>
-        <div style={{ marginTop: "24px" }}>
+
+        <div className="admin-charts-grid">
+
+          <div>
+            <ActivityTrendChart
+              data={activityData}
+              title="Publishing Activity"
+              subtitle="Monthly articles published"
+            />
+          </div>
+
+          <div>
+            <CategoryDistributionChart
+              data={categoryData}
+              title="Content Category Breakdown"
+            />
+          </div>
+
+        </div>
+
+        <div >
           <UserGrowthChart
             data={userGrowthData}
-            title="User Growth & Sessions Velocity"
-            subtitle="Platform signup progression over past 7 months"
+            title="User Growth & Sessions"
+            subtitle="Platform signup progression over the past 7 months"
           />
         </div>
       </section>
-    </div>
+
+    </main>
   );
 };
 

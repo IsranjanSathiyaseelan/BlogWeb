@@ -25,27 +25,27 @@ export interface BlogPost {
   title: string;
   excerpt: string;
   content: string[];
-  imageUrl: string;
+  imageUrl?: string;
   author: string;
   authorEmail?: string;
   publishedAt: string;
+  publishedDate?: string;
   readMinutes: number;
+  readingTime?: string;
   category: BlogCategory;
   featured: boolean;
+  keywords?: string[];
+  isDummy?: boolean;
 }
 
 export type CreateBlogPostInput = Omit<
   BlogPost,
   "id" | "slug" | "publishedAt" | "featured" | "author" | "imageUrl"
-> & {
-  imageUrl?: string;
-};
+>;
 
 export type UpdateBlogPostInput = Partial<
   Omit<BlogPost, "id" | "slug" | "publishedAt" | "author" | "imageUrl">
-> & {
-  imageUrl?: string;
-};
+>;
 
 export interface BlogContextValue {
   posts: BlogPost[];

@@ -75,6 +75,13 @@
   gap: 10px;
 }
 
+.blogcard__tags-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 /* Category Badge */
 .blogcard__tag {
   display: inline-flex;
@@ -94,6 +101,18 @@
 .blogcard:hover .blogcard__tag {
   background: rgba(79, 70, 229, 0.15);
   color: #4338ca;
+}
+
+/* Distinguishable Dummy/Demo Tag */
+.blogcard__tag--dummy {
+  background: rgba(14, 165, 233, 0.09);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.22);
+}
+
+.blogcard:hover .blogcard__tag--dummy {
+  background: rgba(14, 165, 233, 0.16);
+  color: #0369a1;
 }
 
 /* Title & Arrow Effect */

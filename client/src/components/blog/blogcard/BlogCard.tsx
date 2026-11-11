@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import type { BlogCardProps } from "../../../types/ui";
+import BlogCover from "../blogcover/BlogCover";
 import "./BlogCard.css";
 
 const BlogCard = ({
   title,
   description,
-  imageUrl,
   link,
   category,
   publishedAt,
   readMinutes,
   layout = "vertical",
+  postId,
+  isDummy,
 }: BlogCardProps) => {
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -23,14 +25,13 @@ const BlogCard = ({
   return (
     <article className={cardClassName}>
       <Link to={link} className="blogcard__link" aria-label={`Read ${title}`}>
-        {/* Media / Cover Image */}
+        {/* Media / Generated Cover */}
         <div className="blogcard__media">
-          <img
-            src={imageUrl}
-            alt={title}
-            className="blogcard__image"
-            loading="lazy"
-            decoding="async"
+          <BlogCover
+            variant="card"
+            title={title}
+            category={category}
+            postId={postId ?? title}
           />
           <div className="blogcard__media-overlay" />
           {category && <span className="blogcard__tag-floating">{category}</span>}
@@ -39,7 +40,14 @@ const BlogCard = ({
         {/* Card Body */}
         <div className="blogcard__content">
           <div className="blogcard__header">
-            {category && <span className="blogcard__tag">{category}</span>}
+            <div className="blogcard__tags-row">
+              {category && <span className="blogcard__tag">{category}</span>}
+              {isDummy && (
+                <span className="blogcard__tag blogcard__tag--dummy">
+                  Demo Story
+                </span>
+              )}
+            </div>
             <h3 className="blogcard__title">
               <span>{title}</span>
               <svg

@@ -96,12 +96,13 @@ const AllBlogs = () => {
               key={post.id}
               title={post.title}
               description={post.excerpt}
-              imageUrl={post.imageUrl}
               category={post.category}
               publishedAt={post.publishedAt}
               readMinutes={post.readMinutes}
               layout={post.featured ? "horizontal" : "vertical"}
               link={`/blog/${post.slug}`}
+              postId={post.id}
+              isDummy={post.isDummy}
             />
           ))}
         </div>

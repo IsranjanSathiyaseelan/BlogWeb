@@ -34,12 +34,14 @@ export interface SignUpProps {
 export interface BlogCardProps {
   title: string;
   description: string;
-  imageUrl: string;
+  imageUrl?: string;
   link: string;
   category?: string;
   publishedAt: string;
   readMinutes: number;
   layout?: "vertical" | "horizontal";
+  postId?: number | string;
+  isDummy?: boolean;
 }
 
 export type SignFormEvent = FormEvent<HTMLFormElement>;

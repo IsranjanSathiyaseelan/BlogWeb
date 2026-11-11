@@ -2,6 +2,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useBlog } from "../context/blog/BlogContext";
 import Button from "../components/common/button/Button";
+import BlogCover from "../components/blog/blogcover/BlogCover";
+import BlogCard from "../components/blog/blogcard/BlogCard";
+import { getRecommendedPosts } from "../utils/recommendations";
 import "./pages.css";
 import "./BlogPostPage.css";
 
@@ -155,7 +158,7 @@ const buildContentBlocks = (content: string[]): ContentBlock[] => {
 
 const BlogPostPage = () => {
   const { slug } = useParams();
-  const { getPostBySlug } = useBlog();
+  const { getPostBySlug, posts } = useBlog();
   const navigate = useNavigate();
   const [readingProgress, setReadingProgress] = useState(0);
   const [copiedCodeBlock, setCopiedCodeBlock] = useState<string | null>(null);
@@ -173,6 +176,12 @@ const BlogPostPage = () => {
     () => contentBlocks.findIndex((block) => block.type === "paragraph"),
     [contentBlocks],
   );
+
+  // Compute recommendations via TF-IDF & cosine similarity
+  const recommendedPosts = useMemo(() => {
+    if (!post || !posts.length) return [];
+    return getRecommendedPosts(post, posts, 3);
+  }, [post, posts]);
 
   // Scroll to top when page opens
   useEffect(() => {
@@ -274,6 +283,11 @@ const BlogPostPage = () => {
 
           <div className="blog-post-meta-row">
             <span className="blog-post-badge">{post.category}</span>
+            {post.isDummy && (
+              <span className="blog-post-badge blog-post-badge--dummy">
+                Demo Story
+              </span>
+            )}
             <span className="blog-post-badge">{post.readMinutes} min read</span>
             <span className="blog-post-badge">
               Published {formattedPublishedDate}
@@ -283,6 +297,17 @@ const BlogPostPage = () => {
           <h1 className="blog-post-title">{post.title}</h1>
           <p className="blog-post-dek">By {post.author}</p>
         </header>
+
+        {/* Automatic Blog Cover */}
+        <div className="blog-post-cover-wrapper">
+          <BlogCover
+            variant="hero"
+            title={post.title}
+            category={post.category}
+            postId={post.id}
+            className="blog-post-cover"
+          />
+        </div>
 
         <div className="blog-post-layout">
           <div className="blog-post-layout-spacer" aria-hidden="true" />
@@ -382,6 +407,36 @@ const BlogPostPage = () => {
             </div>
           </article>
         </div>
+
+        {/* ML Recommendations Section */}
+        {recommendedPosts.length > 0 && (
+          <section className="blog-post-recommendations">
+            <div className="recommendations-header">
+              <span className="recommendations-badge">Semantic Recommendations</span>
+              <h2 className="recommendations-title">Recommended Articles</h2>
+              <p className="recommendations-subtitle">
+                Related stories tailored to this topic based on ML content and keyword similarity.
+              </p>
+            </div>
+
+            <div className="recommendations-grid">
+              {recommendedPosts.map((recPost) => (
+                <BlogCard
+                  key={recPost.id}
+                  title={recPost.title}
+                  description={recPost.excerpt}
+                  category={recPost.category}
+                  publishedAt={recPost.publishedAt}
+                  readMinutes={recPost.readMinutes}
+                  layout="vertical"
+                  link={`/blog/${recPost.slug}`}
+                  postId={recPost.id}
+                  isDummy={recPost.isDummy}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

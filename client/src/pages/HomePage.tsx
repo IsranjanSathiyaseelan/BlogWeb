@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BlogCard from "../components/blog/blogcard/BlogCard";
+import BlogCover from "../components/blog/blogcover/BlogCover";
 import Button from "../components/common/button/Button";
 import { useBlog } from "../context/blog/BlogContext";
 import type { BlogPost } from "../types/blog";
@@ -33,21 +34,38 @@ const HomePage = () => {
 
   return (
     <div className="page home-page home-minimal">
-      {/* MINIMAL HERO HEADER */}
-      <section className="home-minimal-hero content-panel">
-        <div className="home-minimal-hero__content">
-          <h1 className="home-minimal-title">Explore Articles & Insights</h1>
+      {/* REDESIGNED MODERN HERO HEADER */}
+      <section className="home-hero-modern">
+        <div className="home-hero-backdrop" aria-hidden="true">
+          <div className="home-hero-glow home-hero-glow--1" />
+          <div className="home-hero-glow home-hero-glow--2" />
+        </div>
 
-          {/* Search & Category Pills */}
-          <div className="home-filter-bar">
+        <div className="home-hero-container">
+          <div className="home-hero-badge">
+            <span className="home-hero-badge-dot" />
+            <span>Curated Editorial Insights</span>
+          </div>
+
+          <h1 className="home-hero-title">
+            Where thoughtful ideas <br />
+            <span className="home-hero-gradient-text">meet modern execution.</span>
+          </h1>
+          
+          <p className="home-hero-subtitle">
+            Explore battle-tested engineering post-mortems, design patterns, and practical guides written by builders for builders.
+          </p>
+
+          {/* Floating Search & Category Filter Bar */}
+          <div className="home-filter-dock">
             <div className="home-search-box">
               <svg
-                width="18"
-                height="18"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="2.2"
                 aria-hidden="true"
               >
                 <circle cx="11" cy="11" r="8" />
@@ -55,7 +73,7 @@ const HomePage = () => {
               </svg>
               <input
                 type="text"
-                placeholder="Search blogs by title, category, or author..."
+                placeholder="Search articles by title, keyword, or author..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -64,6 +82,7 @@ const HomePage = () => {
                   type="button"
                   className="home-search-clear"
                   onClick={() => setSearchQuery("")}
+                  aria-label="Clear search"
                 >
                   ✕
                 </button>
@@ -78,7 +97,7 @@ const HomePage = () => {
                 }`}
                 onClick={() => setSelectedCategory("All")}
               >
-                All Stories ({posts.length})
+                All Stories <span className="chip-count">({posts.length})</span>
               </button>
               {categories.map((cat) => (
                 <button
@@ -102,11 +121,14 @@ const HomePage = () => {
         <section className="home-spotlight content-panel">
           <div className="spotlight-badge">Featured Story</div>
           <div className="spotlight-card" onClick={() => navigate(`/blog/${featuredStory.slug}`)}>
-            {featuredStory.imageUrl && (
-              <div className="spotlight-image-wrapper">
-                <img src={featuredStory.imageUrl} alt={featuredStory.title} />
-              </div>
-            )}
+            <div className="spotlight-image-wrapper">
+              <BlogCover
+                variant="spotlight"
+                title={featuredStory.title}
+                category={featuredStory.category}
+                postId={featuredStory.id}
+              />
+            </div>
             <div className="spotlight-details">
               <div className="spotlight-meta">
                 <span className="spotlight-category">{featuredStory.category}</span>
@@ -160,12 +182,13 @@ const HomePage = () => {
                 key={post.id}
                 title={post.title}
                 description={post.excerpt}
-                imageUrl={post.imageUrl}
                 category={post.category}
                 publishedAt={post.publishedAt}
                 readMinutes={post.readMinutes}
                 layout="vertical"
                 link={`/blog/${post.slug}`}
+                postId={post.id}
+                isDummy={post.isDummy}
               />
             ))}
           </div>

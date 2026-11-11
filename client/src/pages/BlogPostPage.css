@@ -266,3 +266,81 @@
 .blog-post-shell * {
   opacity: 1 !important;
 }
+
+.blog-post-badge--dummy {
+  background: rgba(14, 165, 233, 0.09) !important;
+  color: #0284c7 !important;
+  border-color: rgba(14, 165, 233, 0.3) !important;
+}
+
+/* =========================
+   BLOG POST COVER WRAPPER
+========================= */
+.blog-post-cover-wrapper {
+  width: min(72ch, 100%);
+  margin: 0 auto 2rem;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.blog-post-cover-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 20px;
+  object-fit: cover;
+  max-height: 400px;
+}
+
+/* =========================
+   RECOMMENDATIONS SECTION
+========================= */
+.blog-post-recommendations {
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.recommendations-header {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.recommendations-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.recommendations-title {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.recommendations-subtitle {
+  color: var(--color-muted, #64748b);
+  font-size: 0.975rem;
+  margin: 0;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 1.75rem;
+}
+
+@media (max-width: 768px) {
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+}

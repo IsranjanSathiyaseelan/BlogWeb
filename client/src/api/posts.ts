@@ -1,13 +1,11 @@
 import type { BlogPost } from "../types/blog";
 import api from "./axios";
 import { ENDPOINTS } from "./endpoints";
-import { images } from "../assets/asset";
 
 export type CreateBlogPostPayload = Omit<
   BlogPost,
   "id" | "slug" | "publishedAt" | "featured" | "author" | "imageUrl"
 > & {
-  imageUrl?: string;
   content: string[];
 };
 
@@ -24,11 +22,11 @@ const normalizePost = (post: any): BlogPost => ({
   content:
     typeof post.content === "string"
       ? post.content
-          .split(/\r?\n/)
-          .map((line: string) => line.trim())
-          .filter(Boolean)
+        .split(/\r?\n/)
+        .map((line: string) => line.trim())
+        .filter(Boolean)
       : post.content,
-  imageUrl: post.imageUrl ?? post.image_url ?? images.post,
+  imageUrl: post.imageUrl ?? post.image_url ?? "",
   author: typeof post.author === "string" ? post.author : (post.author?.name ?? post.author_name ?? `Author ${post.author_id ?? post.authorId}`),
   authorEmail: post.authorEmail ?? post.author_email ?? post.author?.email ?? "",
   publishedAt: post.publishedAt ?? post.published_at,
@@ -63,7 +61,7 @@ export const createPost = async (
 };
 
 export const updatePost = async (
-  id: number |string,
+  id: number | string,
   payload: UpdateBlogPostPayload,
 ): Promise<BlogPost> => {
   const body = {

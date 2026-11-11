@@ -7,20 +7,26 @@ import type {
   UpdateBlogPostInput,
 } from "../../types/blog";
 import * as postsApi from "../../api/posts";
+import dummyStories from "../../data/dummy.js";
 
 export { useBlog } from "./blogStore";
 
 export const BlogProvider = ({ children }: { children: ReactNode }) => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>(dummyStories);
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
         const backendPosts = await postsApi.getPosts();
-        setPosts(backendPosts);
+        // Merge backend posts with dummy stories, avoiding ID collisions
+        const backendIds = new Set(backendPosts.map((p) => p.id));
+        const filteredDummy = dummyStories.filter(
+          (d) => !backendIds.has(d.id),
+        );
+        setPosts([...backendPosts, ...filteredDummy]);
       } catch (error) {
         console.error("Unable to load blog posts from backend:", error);
-        setPosts([]);
+        setPosts(dummyStories);
       }
     };
 

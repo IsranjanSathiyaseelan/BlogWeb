@@ -2,14 +2,31 @@
 
 :root {
 	font-family: "Plus Jakarta Sans", sans-serif;
-	--color-bg: #f7fbff;
+	--color-bg: #fbfcfb;
 	--color-surface: #ffffff;
-	--color-primary: #4f46e5;
-	--color-primary-2: #6366f1;
-	--color-muted: #64748b;
-	--color-text: #0f172a;
-	--container-width: 1120px;
+	--color-primary: #406359;
+	--color-primary-2: #52796f;
+	--color-muted: #526660;
+	--color-text: #1c2826;
+	--container-width: 1240px;
 	--radius-lg: 16px;
+
+	/* Editorial Design Tokens: Sage Green & Cream Identity */
+	--sage-50: #f4f7f5;
+	--sage-100: #e7ece9;
+	--sage-200: #cdd9d3;
+	--sage-300: #a7bcb2;
+	--sage-400: #7e9d90;
+	--sage-500: #52796f;
+	--sage-600: #406359;
+	--sage-700: #35534b;
+	--sage-800: #2a413b;
+	--sage-900: #1c2826;
+
+	--color-ivory: #fcfdfc;
+	--color-cream: #f4f6f4;
+	--color-charcoal: #1c2826;
+	--color-charcoal-muted: #526660;
 }
 
 * {

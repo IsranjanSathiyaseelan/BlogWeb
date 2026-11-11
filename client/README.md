@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# BlogWeb Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + TypeScript single-page application built with Vite and React Router 7.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Highlights
 
-## React Compiler
+- **Automatic Blog Cover Component (`BlogCover.tsx`)**:
+  - Dynamically renders responsive SVG covers using 9 gradient presets and subtle decorative geometry.
+  - Generates deterministic color combinations based on post IDs/titles via djb2 hashing.
+  - Three distinct variants: `card` (16:9 thumbnails), `spotlight` (featured articles), and `hero` (article headers).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **On-Device ML Recommendation Engine (`recommendations.ts`)**:
+  - Uses client-side TF-IDF and Cosine Similarity vector matching.
+  - Analyzes titles (3×), categories (2×), keywords (2×), excerpts, and descriptions.
+  - Suggests top 3–5 relevant articles on blog detail pages, excluding the current post and deduplicating matches.
+  - Zero external API dependencies or fees.
 
-## Expanding the ESLint configuration
+- **10 Curated Dummy IT Stories (`dummy.js`)**:
+  - In-depth sample articles across 10 technology domains:
+    - Artificial Intelligence and Machine Learning
+    - Web Development
+    - React and JavaScript
+    - Cybersecurity
+    - Cloud Computing
+    - Software Engineering
+    - Data Science
+    - Python Programming
+    - DevOps and Automation
+    - Emerging Technologies
+  - Stored purely client-side; tagged with distinguishable `Demo Story` badges in the UI.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Interactive SVG Dashboards**:
+  - Admin & user dashboards featuring custom SVG line charts, area charts, and bar charts.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Scripts
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+```bash
+# Start development server
+npm run dev
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+# Type-check and build for production
+npm run build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Preview production build locally
+npm run preview
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Lint the codebase
+npm run lint
 ```
